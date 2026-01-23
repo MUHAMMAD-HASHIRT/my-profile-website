@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Academus International School</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1a237e 0%, #283593 100%);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .logo-section {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo-svg {
+            width: 50px;
+            height: 45px;
+            margin-bottom: 10px;
+        }
+
+        .school-name {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .user-info {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .user-role {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        .nav-icon {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            right: 20px;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1a237e;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid #1a237e;
+        }
+
+        .stat-card.gold {
+            border-left-color: #ffd700;
+        }
+
+        .stat-card.green {
+            border-left-color: #4caf50;
+        }
+
+        .stat-card.blue {
+            border-left-color: #2196f3;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1a237e;
+            margin-bottom: 5px;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            color: #4caf50;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a237e;
+            margin-bottom: 20px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #e0e0e0;
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge.active {
+            background: #e8f5e9;
+            color: #4caf50;
+        }
+
+        .badge.pending {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #1a237e;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #283593;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26,35,126,0.3);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #1a237e;
+            box-shadow: 0 0 0 3px rgba(26,35,126,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-section">
+            <svg class="logo-svg" viewBox="0 0 75 65" xmlns="http://www.w3.org/2000/svg">
+                <line x1="37" y1="8" x2="37" y2="52" stroke="#ffd700" stroke-width="1"/>
+                <path d="M 8 12 L 8 48 Q 8 52 12 52 L 35 52 Q 37 52 37 48 L 37 12 Q 37 8 35 8 L 12 8 Q 8 8 8 12 Z" fill="#ffd700" stroke="#ffd700" stroke-width="1.2"/>
+                <circle cx="22" cy="30" r="7" fill="#1a237e"/>
+                <ellipse cx="22" cy="30" rx="7" ry="3" fill="none" stroke="#ffd700" stroke-width="1"/>
+                <line x1="15" y1="30" x2="29" y2="30" stroke="#ffd700" stroke-width="1"/>
+                <path d="M 37 12 L 37 48 Q 37 52 41 52 L 64 52 Q 67 52 67 48 L 67 12 Q 67 8 64 8 L 41 8 Q 37 8 37 12 Z" fill="#1a237e" stroke="#1a237e" stroke-width="1.2"/>
+                <path d="M 48 22 L 52 18 L 56 22 L 54 28 L 50 28 Z" fill="#ffd700"/>
+                <path d="M 50 28 L 48 32 L 52 35 L 56 32 L 54 28" fill="#ffd700"/>
+                <path d="M 50 26 L 48 30 M 54 26 L 56 30" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="52" cy="30" r="1.5" fill="#1a237e"/>
+            </svg>
+            <div class="school-name">ACADEMUS</div>
+        </div>
+
+        <div class="user-info">
+            <div class="user-name" id="userName">Admin User</div>
+            <div class="user-role">Administrator</div>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link active" onclick="event.preventDefault(); showSection('dashboard'); return false;">
+                    <span class="nav-icon">📊</span>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="event.preventDefault(); showSection('studentDetails'); return false;">
+                    <span class="nav-icon">👥</span>
+                    Student Details
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="event.preventDefault(); showSection('students'); return false;">
+                    <span class="nav-icon">📋</span>
+                    View All Students
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="event.preventDefault(); showSection('teachers'); return false;">
+                    <span class="nav-icon">👩‍🏫</span>
+                    Teachers
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="admin-management.html" class="nav-link">
+                    <span class="nav-icon">⚙️</span>
+                    Management
+                </a>
+            </li>
+        </ul>
+
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+    </div>
+
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboardSection">
+            <div class="header">
+                <h1 class="page-title">Admin Dashboard</h1>
+                <div>Welcome back!</div>
+            </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Students</div>
+                <div class="stat-value" id="totalStudentsCount">-</div>
+                <div class="stat-change" id="studentsChange">Calculating...</div>
+            </div>
+            <div class="stat-card gold">
+                <div class="stat-label">Total Teachers</div>
+                <div class="stat-value">48</div>
+                <div class="stat-change">+3 new this month</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-label">Active Classes</div>
+                <div class="stat-value">32</div>
+                <div class="stat-change">All classes active</div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-label">Pending Assessments</div>
+                <div class="stat-value">156</div>
+                <div class="stat-change">Due this week</div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="card">
+                <h2 class="card-title">Recent Activities</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Activity</th>
+                            <th>User</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>New student registered</td>
+                            <td>John Doe</td>
+                            <td>2 hours ago</td>
+                            <td><span class="badge active">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>Assessment submitted</td>
+                            <td>Jane Smith</td>
+                            <td>5 hours ago</td>
+                            <td><span class="badge active">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>Teacher account created</td>
+                            <td>Admin</td>
+                            <td>1 day ago</td>
+                            <td><span class="badge pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>Report generated</td>
+                            <td>System</td>
+                            <td>2 days ago</td>
+                            <td><span class="badge active">Active</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Quick Actions</h2>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="showSection('studentDetails')">Add New Student</button>
+                    <button class="btn btn-primary" onclick="showSection('students')">View All Students</button>
+                    <button class="btn btn-primary" onclick="window.location.href='admin-management.html'">Go to Management</button>
+                    <button class="btn btn-primary" onclick="window.location.href='admin-management.html'">Generate Report</button>
+                </div>
+            </div>
+
+            <!-- Add Student Modal (Legacy - kept for compatibility) -->
+            <div id="addStudentModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;" onclick="if(event.target.id === 'addStudentModal') closeAddStudentModal();">
+                <div style="background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); position: relative; max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation();">
+                    <button onclick="closeAddStudentModal()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 24px; color: #999; cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">×</button>
+                    <h2 style="color: #1a237e; margin-bottom: 20px;">Add New Student</h2>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">Student ID Number *</label>
+                        <input type="text" id="newStudentId" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;" placeholder="Enter Student ID (e.g., STU001)" required>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">Full Name *</label>
+                        <input type="text" id="newStudentName" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;" placeholder="Enter student name" required>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 5px;">Class *</label>
+                            <select id="newStudentClass" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;" required>
+                                <option value="">Select Class</option>
+                                <option value="1">Class 1</option>
+                                <option value="2">Class 2</option>
+                                <option value="3">Class 3</option>
+                                <option value="4">Class 4</option>
+                                <option value="5">Class 5</option>
+                                <option value="6">Class 6</option>
+                                <option value="7">Class 7</option>
+                                <option value="8">Class 8</option>
+                                <option value="9">Class 9</option>
+                                <option value="10">Class 10</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; font-weight: 600; margin-bottom: 5px;">Section *</label>
+                            <select id="newStudentSection" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;" required>
+                                <option value="">Select Section</option>
+                                <option value="A">Section A</option>
+                                <option value="B">Section B</option>
+                                <option value="C">Section C</option>
+                                <option value="D">Section D</option>
+                                <option value="E">Section E</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">Phone Number</label>
+                        <input type="tel" id="newStudentPhone" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;" placeholder="e.g., +1234567890">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">Address</label>
+                        <input type="text" id="newStudentAddress" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;" placeholder="Enter address">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="addStudent()" style="flex: 1;">Add Student</button>
+                        <button class="btn" onclick="closeAddStudentModal()" style="flex: 1; background: #6c757d; color: white;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Details Section (Add/Edit) -->
+        <div id="studentDetailsSection" style="display: none;">
+            <div class="header">
+                <h1 class="page-title">Student Details</h1>
+                <div style="font-size: 14px; color: #666;">Add and manage student information</div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Add New Student</h2>
+                <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
+                    Fill in all the details below to register a new student in the system.
+                </p>
+                
+                <form id="studentDetailsForm" style="max-width: 800px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div class="form-group">
+                            <label class="form-label">Student ID Number *</label>
+                            <input type="text" id="detailStudentId" class="form-input" placeholder="e.g., STU001" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" id="detailStudentName" class="form-input" placeholder="Enter full name" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div class="form-group">
+                            <label class="form-label">Class *</label>
+                            <select id="detailStudentClass" class="form-select" required>
+                                <option value="">Select Class</option>
+                                <option value="1">Class 1</option>
+                                <option value="2">Class 2</option>
+                                <option value="3">Class 3</option>
+                                <option value="4">Class 4</option>
+                                <option value="5">Class 5</option>
+                                <option value="6">Class 6</option>
+                                <option value="7">Class 7</option>
+                                <option value="8">Class 8</option>
+                                <option value="9">Class 9</option>
+                                <option value="10">Class 10</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Section *</label>
+                            <select id="detailStudentSection" class="form-select" required>
+                                <option value="">Select Section</option>
+                                <option value="A">Section A</option>
+                                <option value="B">Section B</option>
+                                <option value="C">Section C</option>
+                                <option value="D">Section D</option>
+                                <option value="E">Section E</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" id="detailStudentPhone" class="form-input" placeholder="e.g., +1234567890">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Address</label>
+                            <input type="text" id="detailStudentAddress" class="form-input" placeholder="Enter address">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <button type="button" class="btn btn-primary" onclick="saveStudentDetails()" style="padding: 12px 30px; font-size: 16px;">Save Student</button>
+                        <button type="button" class="btn" onclick="clearStudentForm()" style="padding: 12px 30px; font-size: 16px; background: #6c757d; color: white; margin-left: 10px;">Clear Form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Students Section (View All) -->
+        <div id="studentsSection" style="display: none;">
+            <div class="header">
+                <h1 class="page-title">All Registered Students</h1>
+                <button class="btn btn-primary" onclick="showSection('studentDetails')">+ Add New Student</button>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Student List</h2>
+                <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
+                    💡 <strong>Total Students:</strong> <span id="studentCount">0</span> | 
+                    Click "+ Add New Student" button above or go to "Student Details" section to register a new student.
+                </p>
+                <div id="studentsList">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Phone</th>
+                                <th>Address</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 20px; color: #666;">Loading students...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teachers Section -->
+        <div id="teachersSection" style="display: none;">
+            <div class="header">
+                <h1 class="page-title">Teacher Management</h1>
+                <button class="btn btn-primary" onclick="window.location.href='admin-management.html'">Manage Assignments</button>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">All Teachers</h2>
+                <p style="color: #666; margin-bottom: 20px; font-size: 14px;">
+                    💡 <strong>Tip:</strong> Click "Edit ID/Pass" to assign or change Portal ID and Password for teachers. 
+                    Click "Assign Classes" to manage which classes and sections each teacher teaches.
+                </p>
+                <div id="teachersList">
+                    <p style="text-align: center; padding: 20px; color: #666;">Loading teachers...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data-storage.js"></script>
+    <script>
+        // Initialize on page load
+        function initializePage() {
+            // Check if user is logged in
+            if (!sessionStorage.getItem('adminLoggedIn')) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            // Set user name
+            const userEmail = sessionStorage.getItem('userEmail');
+            if (userEmail) {
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl) {
+                    userNameEl.textContent = userEmail;
+                }
+            }
+
+            // Wait a bit for data-storage.js to load, then update stats
+            let attempts = 0;
+            const checkDataStorage = setInterval(function() {
+                attempts++;
+                
+                if (typeof schoolData !== 'undefined') {
+                    console.log('Data storage found! Updating stats...');
+                    clearInterval(checkDataStorage);
+                    
+                    try {
+                        const data = schoolData.getData();
+                        console.log('Initial data check - Students:', data.students ? data.students.length : 0);
+                        
+                        // Update stats
+                        updateStats();
+                    } catch (e) {
+                        console.error('Error checking initial data:', e);
+                    }
+                } else if (attempts > 10) {
+                    console.error('data-storage.js not loaded after 10 attempts!');
+                    clearInterval(checkDataStorage);
+                    document.getElementById('totalStudentsCount').textContent = 'Error';
+                    document.getElementById('studentsChange').textContent = 'Data not loaded';
+                }
+            }, 200);
+        }
+
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            // DOM already loaded
+            initializePage();
+        }
+        
+        // Also run on window load as backup
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                if (typeof schoolData !== 'undefined') {
+                    console.log('Window loaded - Updating stats again');
+                    updateStats();
+                }
+            }, 300);
+        });
+
+        function showAddStudentModal() {
+            console.log('showAddStudentModal called');
+            const modal = document.getElementById('addStudentModal');
+            if (!modal) {
+                alert('Error: Modal not found. Please refresh the page.');
+                console.error('addStudentModal element not found');
+                return;
+            }
+            
+            console.log('Showing modal');
+            modal.style.display = 'flex';
+            
+            // Clear all fields
+            const idField = document.getElementById('newStudentId');
+            const nameField = document.getElementById('newStudentName');
+            const classField = document.getElementById('newStudentClass');
+            const sectionField = document.getElementById('newStudentSection');
+            
+            if (idField) idField.value = '';
+            if (nameField) nameField.value = '';
+            if (classField) classField.value = '';
+            if (sectionField) sectionField.value = '';
+            
+            // Focus on first field
+            setTimeout(() => {
+                if (idField) idField.focus();
+            }, 100);
+        }
+
+        function closeAddStudentModal() {
+            document.getElementById('addStudentModal').style.display = 'none';
+            document.getElementById('newStudentId').value = '';
+            document.getElementById('newStudentName').value = '';
+            document.getElementById('newStudentClass').value = '';
+            document.getElementById('newStudentSection').value = '';
+            const phoneField = document.getElementById('newStudentPhone');
+            const addressField = document.getElementById('newStudentAddress');
+            if (phoneField) phoneField.value = '';
+            if (addressField) addressField.value = '';
+            
+            // Reset button
+            const addBtn = document.querySelector('#addStudentModal .btn-primary');
+            if (addBtn) {
+                addBtn.textContent = 'Add Student';
+                addBtn.onclick = addStudent;
+            }
+        }
+
+        function showSection(section) {
+            console.log('showSection called with:', section);
+            
+            // Hide all sections
+            const dashboardSection = document.getElementById('dashboardSection');
+            const studentDetailsSection = document.getElementById('studentDetailsSection');
+            const studentsSection = document.getElementById('studentsSection');
+            const teachersSection = document.getElementById('teachersSection');
+            
+            if (dashboardSection) dashboardSection.style.display = 'none';
+            if (studentDetailsSection) studentDetailsSection.style.display = 'none';
+            if (studentsSection) studentsSection.style.display = 'none';
+            if (teachersSection) teachersSection.style.display = 'none';
+            
+            // Show selected section
+            if (section === 'dashboard') {
+                if (dashboardSection) dashboardSection.style.display = 'block';
+            } else if (section === 'studentDetails') {
+                if (studentDetailsSection) {
+                    studentDetailsSection.style.display = 'block';
+                    clearStudentForm();
+                }
+            } else if (section === 'students') {
+                if (studentsSection) {
+                    console.log('Showing students section');
+                    studentsSection.style.display = 'block';
+                    
+                    // Force load students immediately and also after delay
+                    console.log('Calling loadStudentsList immediately...');
+                    loadStudentsList();
+                    
+                    // Also try after a delay to ensure DOM is ready
+                    setTimeout(() => {
+                        console.log('Calling loadStudentsList after delay...');
+                        loadStudentsList();
+                    }, 300);
+                } else {
+                    console.error('studentsSection element not found!');
+                }
+            } else if (section === 'teachers') {
+                if (teachersSection) {
+                    teachersSection.style.display = 'block';
+                    setTimeout(() => {
+                        loadTeachersList();
+                    }, 200);
+                }
+            }
+            
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+        
+        function saveStudentDetails() {
+            console.log('saveStudentDetails called');
+            
+            if (typeof schoolData === 'undefined') {
+                alert('Error: Data storage not loaded. Please refresh the page.');
+                return;
+            }
+
+            const studentId = document.getElementById('detailStudentId').value.trim();
+            const name = document.getElementById('detailStudentName').value.trim();
+            const classNum = document.getElementById('detailStudentClass').value;
+            const section = document.getElementById('detailStudentSection').value;
+            const phone = document.getElementById('detailStudentPhone').value.trim();
+            const address = document.getElementById('detailStudentAddress').value.trim();
+
+            // Validate required fields
+            if (!studentId || !name || !classNum || !section) {
+                alert('Please fill all required fields (marked with *)');
+                return;
+            }
+
+            try {
+                const data = schoolData.getData();
+                
+                if (!data.students) {
+                    data.students = [];
+                }
+
+                // Check if Student ID already exists
+                const idExists = data.students.some(s => s.studentId && s.studentId.toLowerCase() === studentId.toLowerCase());
+                if (idExists) {
+                    alert('Student ID already exists. Please use a different ID.');
+                    document.getElementById('detailStudentId').focus();
+                    return;
+                }
+
+                // Create new student with all details
+                const newStudent = {
+                    id: 's' + Date.now(),
+                    studentId: studentId,
+                    name: name,
+                    class: classNum,
+                    section: section,
+                    phone: phone || '',
+                    address: address || ''
+                };
+                
+                console.log('Adding student:', newStudent);
+                
+                data.students.push(newStudent);
+                schoolData.saveData(data);
+                
+                console.log('Student saved. New count:', data.students.length);
+
+                alert('Student added successfully!');
+                clearStudentForm();
+                
+                // Update stats immediately
+                if (typeof updateStats === 'function') {
+                    updateStats();
+                }
+                
+                // If viewing students list, reload it
+                const studentsSection = document.getElementById('studentsSection');
+                if (studentsSection && studentsSection.style.display !== 'none') {
+                    setTimeout(() => {
+                        loadStudentsList();
+                    }, 200);
+                }
+            } catch (error) {
+                console.error('Error adding student:', error);
+                alert('Error adding student: ' + error.message);
+            }
+        }
+        
+        function clearStudentForm() {
+            document.getElementById('detailStudentId').value = '';
+            document.getElementById('detailStudentName').value = '';
+            document.getElementById('detailStudentClass').value = '';
+            document.getElementById('detailStudentSection').value = '';
+            document.getElementById('detailStudentPhone').value = '';
+            document.getElementById('detailStudentAddress').value = '';
+        }
+
+        function loadStudentsList() {
+            console.log('loadStudentsList called');
+            
+            // Check if data-storage is loaded
+            if (typeof schoolData === 'undefined') {
+                console.error('data-storage.js not loaded!');
+                const tbody = document.getElementById('studentsTableBody');
+                if (tbody) {
+                    tbody.innerHTML = 
+                        '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #c33;">Error: Data storage not loaded. Please refresh the page.</td></tr>';
+                }
+                return;
+            }
+            
+            // Get the table body element
+            const tbody = document.getElementById('studentsTableBody');
+            if (!tbody) {
+                console.error('studentsTableBody element not found!');
+                // Try to find it again after a delay
+                setTimeout(() => {
+                    const retryTbody = document.getElementById('studentsTableBody');
+                    if (retryTbody) {
+                        console.log('Found tbody on retry, loading students...');
+                        loadStudentsList();
+                    } else {
+                        console.error('Still cannot find studentsTableBody');
+                    }
+                }, 500);
+                return;
+            }
+            
+            try {
+                // Get data from storage
+                const data = schoolData.getData();
+                console.log('Data retrieved:', data);
+                
+                if (!data) {
+                    console.error('No data returned from getData()');
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #c33;">Error: Could not load data.</td></tr>';
+                    return;
+                }
+                
+                // Ensure students array exists
+                if (!data.students) {
+                    console.log('students array not found, creating it...');
+                    data.students = [];
+                    schoolData.saveData(data);
+                }
+                
+                console.log('Students count:', data.students.length);
+                console.log('Students data:', JSON.stringify(data.students));
+                
+                // Update student count display
+                const countElement = document.getElementById('studentCount');
+                if (countElement) {
+                    countElement.textContent = data.students.length;
+                }
+                
+                // If no students, show message
+                if (data.students.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: #666;">No students found. Go to "Student Details" section to add one.</td></tr>';
+                    return;
+                }
+                
+                // Build table rows
+                let html = '';
+                data.students.forEach((student, index) => {
+                    console.log(`Processing student ${index}:`, student);
+                    html += `<tr>
+                        <td><strong style="color: #1a237e; font-family: monospace;">${student.studentId || 'N/A'}</strong></td>
+                        <td>${student.name || 'N/A'}</td>
+                        <td>Class ${student.class || 'N/A'}</td>
+                        <td>Section ${student.section || 'N/A'}</td>
+                        <td>${student.phone || '-'}</td>
+                        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${student.address || ''}">${student.address || '-'}</td>
+                        <td>
+                            <button class="btn btn-primary" style="padding: 5px 10px; font-size: 12px;" onclick="editStudent('${student.id}')">Edit</button>
+                            <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px; margin-left: 5px;" onclick="deleteStudent('${student.id}')">Delete</button>
+                        </td>
+                    </tr>`;
+                });
+                
+                // Update table
+                tbody.innerHTML = html;
+                console.log('Table updated with', data.students.length, 'students');
+                
+            } catch (error) {
+                console.error('Error loading students:', error);
+                console.error('Error stack:', error.stack);
+                if (tbody) {
+                    tbody.innerHTML = 
+                        '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #c33;">Error loading students: ' + error.message + '</td></tr>';
+                }
+            }
+        }
+        
+        // Make function globally accessible
+        window.loadStudentsList = loadStudentsList;
+
+        function loadTeachersList() {
+            const data = schoolData.getData();
+            const container = document.getElementById('teachersList');
+            
+            if (data.teachers.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 20px; color: #666;">No teachers found.</p>';
+                return;
+            }
+            
+            let html = '<table class="table" style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th>Teacher Name</th>
+                        <th>Subject</th>
+                        <th>Portal ID</th>
+                        <th>Password</th>
+                        <th>Email</th>
+                        <th>Assigned Classes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>';
+            
+            data.teachers.forEach(teacher => {
+                const classes = teacher.classes || [];
+                const portalId = teacher.portalId || 'Not Assigned';
+                const password = teacher.password || 'Not Set';
+                
+                html += `<tr>
+                    <td><strong style="color: #1a237e;">${teacher.name}</strong></td>
+                    <td><span style="background: #e3f2fd; color: #1a237e; padding: 4px 12px; border-radius: 15px; font-size: 12px; font-weight: 600;">${teacher.subject}</span></td>
+                    <td><code style="background: #f5f5f5; padding: 4px 8px; border-radius: 4px; font-family: monospace;">${portalId}</code></td>
+                    <td>
+                        <span id="pwd_${teacher.id}" style="font-family: monospace;">${'*'.repeat(password.length)}</span>
+                        <button class="btn" onclick="togglePassword('${teacher.id}')" style="padding: 2px 8px; font-size: 11px; margin-left: 5px; background: #6c757d; color: white;">Show</button>
+                    </td>
+                    <td style="font-size: 13px; color: #666;">${teacher.email}</td>
+                    <td>`;
+                
+                if (classes.length === 0) {
+                    html += '<span style="color: #999; font-style: italic;">None</span>';
+                } else {
+                    classes.forEach((cls, idx) => {
+                        if (idx > 0) html += ', ';
+                        html += `<span style="background: #1a237e; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-right: 3px;">${cls.class}${cls.section}</span>`;
+                    });
+                }
+                
+                html += `</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="editTeacherCredentials('${teacher.id}')" style="padding: 5px 10px; font-size: 12px;">Edit ID/Pass</button>
+                        <button class="btn btn-primary" onclick="window.location.href='admin-management.html'" style="padding: 5px 10px; font-size: 12px; margin-left: 5px;">Assign Classes</button>
+                    </td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function togglePassword(teacherId) {
+            const data = schoolData.getData();
+            const teacher = data.teachers.find(t => t.id === teacherId);
+            if (!teacher) return;
+            
+            const pwdElement = document.getElementById('pwd_' + teacherId);
+            const btn = event.target;
+            
+            if (btn.textContent === 'Show') {
+                pwdElement.textContent = teacher.password || 'Not Set';
+                btn.textContent = 'Hide';
+            } else {
+                const pwd = teacher.password || '';
+                pwdElement.textContent = '*'.repeat(pwd.length || 8);
+                btn.textContent = 'Show';
+            }
+        }
+
+        function editTeacherCredentials(teacherId) {
+            const data = schoolData.getData();
+            const teacher = data.teachers.find(t => t.id === teacherId);
+            
+            if (!teacher) return;
+            
+            const newPortalId = prompt('Enter new Portal ID:', teacher.portalId || '');
+            if (newPortalId === null) return; // User cancelled
+            
+            const newPassword = prompt('Enter new Password:', teacher.password || '');
+            if (newPassword === null) return; // User cancelled
+            
+            if (!newPortalId.trim() || !newPassword.trim()) {
+                alert('Portal ID and Password cannot be empty!');
+                return;
+            }
+            
+            // Check if Portal ID already exists
+            const idExists = data.teachers.some(t => t.id !== teacherId && t.portalId === newPortalId.trim());
+            if (idExists) {
+                alert('Portal ID already exists. Please use a different ID.');
+                return;
+            }
+            
+            teacher.portalId = newPortalId.trim();
+            teacher.password = newPassword.trim();
+            
+            schoolData.saveData(data);
+            alert('Teacher credentials updated successfully!');
+            loadTeachersList();
+        }
+
+        function addStudent() {
+            console.log('addStudent function called');
+            
+            // Check if data-storage is loaded
+            if (typeof schoolData === 'undefined') {
+                alert('Error: Data storage not loaded. Please refresh the page.');
+                console.error('schoolData is undefined');
+                return;
+            }
+
+            const idField = document.getElementById('newStudentId');
+            const nameField = document.getElementById('newStudentName');
+            const classField = document.getElementById('newStudentClass');
+            const sectionField = document.getElementById('newStudentSection');
+
+            if (!idField || !nameField || !classField || !sectionField) {
+                alert('Error: Form fields not found. Please refresh the page.');
+                console.error('Form fields not found');
+                return;
+            }
+
+            const studentId = idField.value.trim();
+            const name = nameField.value.trim();
+            const classNum = classField.value;
+            const section = sectionField.value;
+
+            console.log('Form values:', { studentId, name, classNum, section });
+
+            // Validate all fields
+            if (!studentId) {
+                alert('Please enter Student ID');
+                idField.focus();
+                return;
+            }
+
+            if (!name) {
+                alert('Please enter Student Name');
+                nameField.focus();
+                return;
+            }
+
+            if (!classNum) {
+                alert('Please select Class');
+                classField.focus();
+                return;
+            }
+
+            if (!section) {
+                alert('Please select Section');
+                sectionField.focus();
+                return;
+            }
+
+            try {
+                // Get data
+                const data = schoolData.getData();
+                console.log('Current data:', data);
+                
+                if (!data) {
+                    alert('Error: Could not load data. Please refresh the page.');
+                    return;
+                }
+                
+                if (!data.students) {
+                    data.students = [];
+                }
+
+                // Check if Student ID already exists
+                const idExists = data.students.some(s => s.studentId && s.studentId.toLowerCase() === studentId.toLowerCase());
+                if (idExists) {
+                    alert('Student ID already exists. Please use a different ID.');
+                    idField.focus();
+                    return;
+                }
+
+                // Get phone and address from modal if available
+                const phoneField = document.getElementById('newStudentPhone');
+                const addressField = document.getElementById('newStudentAddress');
+                const phone = phoneField ? phoneField.value.trim() : '';
+                const address = addressField ? addressField.value.trim() : '';
+                
+                // Create new student with all details
+                const newStudent = {
+                    id: 's' + Date.now(),
+                    studentId: studentId,
+                    name: name,
+                    class: classNum,
+                    section: section,
+                    phone: phone || '',
+                    address: address || ''
+                };
+                
+                console.log('Adding student:', newStudent);
+                
+                // Add to array
+                data.students.push(newStudent);
+                
+                // Save data
+                schoolData.saveData(data);
+                
+                console.log('Student saved. New count:', data.students.length);
+
+                alert('Student added successfully!');
+                closeAddStudentModal();
+                
+                // Update stats immediately
+                setTimeout(() => {
+                    if (typeof updateStats === 'function') {
+                        updateStats();
+                    }
+                }, 100);
+                
+                // Always reload students list if function exists
+                if (typeof loadStudentsList === 'function') {
+                    console.log('Reloading students list after adding...');
+                    // Small delay to ensure modal is closed
+                    setTimeout(() => {
+                        loadStudentsList();
+                    }, 200);
+                }
+                
+                // Also check if students section is visible and reload
+                const studentsSection = document.getElementById('studentsSection');
+                if (studentsSection && studentsSection.style.display !== 'none') {
+                    console.log('Students section is visible, reloading...');
+                    setTimeout(() => {
+                        loadStudentsList();
+                    }, 300);
+                }
+            } catch (error) {
+                console.error('Error adding student:', error);
+                alert('Error adding student: ' + error.message);
+            }
+        }
+
+        function deleteStudent(studentId) {
+            if (!confirm('Are you sure you want to delete this student? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const data = schoolData.getData();
+                data.students = data.students.filter(s => s.id !== studentId);
+                schoolData.saveData(data);
+                
+                alert('Student deleted successfully!');
+                loadStudentsList();
+                updateStats();
+            } catch (error) {
+                console.error('Error deleting student:', error);
+                alert('Error deleting student: ' + error.message);
+            }
+        }
+
+        function editStudent(studentId) {
+            const data = schoolData.getData();
+            const student = data.students.find(s => s.id === studentId);
+            
+            if (!student) {
+                alert('Student not found!');
+                return;
+            }
+            
+            // Switch to Student Details section and fill form
+            showSection('studentDetails');
+            
+            setTimeout(() => {
+                document.getElementById('detailStudentId').value = student.studentId || '';
+                document.getElementById('detailStudentName').value = student.name || '';
+                document.getElementById('detailStudentClass').value = student.class || '';
+                document.getElementById('detailStudentSection').value = student.section || '';
+                document.getElementById('detailStudentPhone').value = student.phone || '';
+                document.getElementById('detailStudentAddress').value = student.address || '';
+                
+                // Change save button to update mode
+                const saveBtn = document.querySelector('#studentDetailsForm button.btn-primary');
+                if (saveBtn) {
+                    saveBtn.textContent = 'Update Student';
+                    saveBtn.onclick = function() {
+                        updateStudentFromDetails(studentId);
+                    };
+                }
+            }, 300);
+        }
+        
+        function updateStudentFromDetails(studentId) {
+            if (typeof schoolData === 'undefined') {
+                alert('Error: Data storage not loaded.');
+                return;
+            }
+
+            const studentIdValue = document.getElementById('detailStudentId').value.trim();
+            const name = document.getElementById('detailStudentName').value.trim();
+            const classNum = document.getElementById('detailStudentClass').value;
+            const section = document.getElementById('detailStudentSection').value;
+            const phone = document.getElementById('detailStudentPhone').value.trim();
+            const address = document.getElementById('detailStudentAddress').value.trim();
+
+            if (!studentIdValue || !name || !classNum || !section) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            try {
+                const data = schoolData.getData();
+                const student = data.students.find(s => s.id === studentId);
+                
+                if (student) {
+                    // Check if new ID conflicts with another student
+                    const idConflict = data.students.some(s => s.id !== studentId && s.studentId && s.studentId.toLowerCase() === studentIdValue.toLowerCase());
+                    if (idConflict) {
+                        alert('Student ID already exists. Please use a different ID.');
+                        return;
+                    }
+                    
+                    student.studentId = studentIdValue;
+                    student.name = name;
+                    student.class = classNum;
+                    student.section = section;
+                    student.phone = phone || '';
+                    student.address = address || '';
+                    
+                    schoolData.saveData(data);
+                    alert('Student updated successfully!');
+                    
+                    // Reset form
+                    clearStudentForm();
+                    
+                    // Reset button
+                    const saveBtn = document.querySelector('#studentDetailsForm button.btn-primary');
+                    if (saveBtn) {
+                        saveBtn.textContent = 'Save Student';
+                        saveBtn.onclick = saveStudentDetails;
+                    }
+                    
+                    // Update stats and reload list
+                    updateStats();
+                    if (document.getElementById('studentsSection').style.display !== 'none') {
+                        loadStudentsList();
+                    }
+                } else {
+                    alert('Student not found!');
+                }
+            } catch (error) {
+                console.error('Error updating student:', error);
+                alert('Error updating student: ' + error.message);
+            }
+        }
+
+        function updateStudent(studentId) {
+            // Redirect to Student Details section for editing
+            editStudent(studentId);
+        }
+
+        function updateStats() {
+            console.log('updateStats called');
+            
+            if (typeof schoolData === 'undefined') {
+                console.error('schoolData not available for stats update');
+                const totalStudentsEl = document.getElementById('totalStudentsCount');
+                const studentsChangeEl = document.getElementById('studentsChange');
+                if (totalStudentsEl) totalStudentsEl.textContent = '0';
+                if (studentsChangeEl) studentsChangeEl.textContent = 'Data not loaded';
+                return;
+            }
+            
+            try {
+                const data = schoolData.getData();
+                console.log('Data retrieved for stats:', data);
+                
+                if (!data) {
+                    console.error('No data returned');
+                    return;
+                }
+                
+                const studentCount = (data.students && data.students.length) || 0;
+                const teacherCount = (data.teachers && data.teachers.length) || 0;
+                
+                console.log('Student count:', studentCount, 'Teacher count:', teacherCount);
+                
+                // Update the stat cards
+                const totalStudentsEl = document.getElementById('totalStudentsCount');
+                if (totalStudentsEl) {
+                    totalStudentsEl.textContent = studentCount.toLocaleString();
+                    console.log('Updated totalStudentsCount to:', studentCount);
+                } else {
+                    console.error('totalStudentsCount element not found');
+                }
+                
+                const studentsChangeEl = document.getElementById('studentsChange');
+                if (studentsChangeEl) {
+                    if (studentCount > 0) {
+                        studentsChangeEl.textContent = `${studentCount} registered student${studentCount !== 1 ? 's' : ''}`;
+                    } else {
+                        studentsChangeEl.textContent = 'No students registered yet';
+                    }
+                    console.log('Updated studentsChange text');
+                } else {
+                    console.error('studentsChange element not found');
+                }
+                
+                // Update other stat cards if they exist
+                const statCards = document.querySelectorAll('.stat-value');
+                if (statCards.length > 0) {
+                    // First card is students (if totalStudentsCount doesn't exist)
+                    if (!totalStudentsEl && statCards[0]) {
+                        statCards[0].textContent = studentCount.toLocaleString();
+                    }
+                    // Second card is teachers
+                    if (statCards.length > 1 && statCards[1]) {
+                        statCards[1].textContent = teacherCount;
+                    }
+                }
+                
+                console.log('Stats updated successfully - Students:', studentCount, 'Teachers:', teacherCount);
+            } catch (error) {
+                console.error('Error updating stats:', error);
+                console.error('Error stack:', error.stack);
+                
+                // Show error in UI
+                const totalStudentsEl = document.getElementById('totalStudentsCount');
+                const studentsChangeEl = document.getElementById('studentsChange');
+                if (totalStudentsEl) totalStudentsEl.textContent = 'Error';
+                if (studentsChangeEl) studentsChangeEl.textContent = 'Error loading data';
+            }
+        }
+        
+        // Make updateStats globally accessible
+        window.updateStats = updateStats;
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'school-portal.html';
+        }
+
+        // Initialize stats on load
+        window.addEventListener('DOMContentLoaded', function() {
+            if (typeof schoolData !== 'undefined') {
+                updateStats();
+            } else {
+                console.error('data-storage.js not loaded!');
+            }
+        });
+    </script>
+</body>
+</html>
+

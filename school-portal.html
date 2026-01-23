@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academus International School - Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .portal-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            box-shadow: var(--shadow-xl);
+            max-width: 1400px;
+            width: 100%;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            min-height: 700px;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 50%, var(--secondary) 100%);
+            color: var(--white);
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .logo-container {
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-wrapper {
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-lg);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .logo-img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+        }
+
+        .school-name {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .school-tagline {
+            font-size: 16px;
+            opacity: 0.95;
+            font-weight: 500;
+            margin-bottom: 40px;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-title {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .welcome-text {
+            font-size: 18px;
+            line-height: 1.7;
+            opacity: 0.95;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .features {
+            list-style: none;
+            margin-top: 40px;
+        }
+
+        .features li {
+            padding: 16px 0;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 500;
+            transition: transform 0.3s;
+        }
+
+        .features li:hover {
+            transform: translateX(8px);
+        }
+
+        .features li::before {
+            content: '✓';
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            color: var(--white);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-weight: 700;
+            flex-shrink: 0;
+            font-size: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .options-section {
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: var(--white);
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 50px;
+            font-weight: 500;
+        }
+
+        .role-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .role-card {
+            background: var(--white);
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 40px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .role-card:hover::before {
+            opacity: 0.05;
+        }
+
+        .role-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .role-card.admin {
+            border-left: 6px solid var(--primary);
+        }
+
+        .role-card.teacher {
+            border-left: 6px solid var(--accent);
+        }
+
+        .role-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .role-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            position: relative;
+            z-index: 1;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .role-card.admin .role-icon {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+        }
+
+        .role-card.teacher .role-icon {
+            background: linear-gradient(135deg, var(--accent), #f97316);
+            color: var(--white);
+        }
+
+        .arrow {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .role-card:hover .arrow {
+            transform: translateX(8px) rotate(-45deg);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .role-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .role-description {
+            font-size: 15px;
+            color: var(--text-light);
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+            font-weight: 400;
+        }
+
+        @media (max-width: 968px) {
+            .portal-container {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+
+            .welcome-section {
+                padding: 60px 40px;
+            }
+
+            .options-section {
+                padding: 60px 40px;
+            }
+
+            .welcome-title {
+                font-size: 36px;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .welcome-section,
+            .options-section {
+                padding: 40px 24px;
+            }
+
+            .welcome-title {
+                font-size: 28px;
+            }
+
+            .school-name {
+                font-size: 28px;
+            }
+
+            .role-card {
+                padding: 28px;
+            }
+
+            .role-icon {
+                width: 56px;
+                height: 56px;
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="portal-container">
+        <div class="welcome-section">
+            <div class="logo-container">
+                <div class="logo-wrapper">
+                    <img src="logo1.png" class="logo-img" alt="School Logo">
+                </div>
+                <div class="school-name">ACADEMUS</div>
+                <div class="school-tagline">International School</div>
+            </div>
+            <div class="welcome-content">
+                <h1 class="welcome-title">Welcome to Our Portal</h1>
+                <p class="welcome-text">
+                    Experience a seamless, secure, and powerful platform designed to streamline school management and enhance educational excellence.
+                </p>
+                <ul class="features">
+                    <li>🔒 Enterprise-grade security</li>
+                    <li>📊 Real-time analytics & insights</li>
+                    <li>⚡ Lightning-fast performance</li>
+                    <li>🎯 Intuitive user experience</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="options-section">
+            <h2 class="section-title">Select Your Portal</h2>
+            <p class="section-subtitle">Choose your role to access your dedicated workspace</p>
+            
+            <div class="role-cards">
+                <a href="admin-login.html" class="role-card admin">
+                    <div class="role-header">
+                        <div class="role-icon">👨‍💼</div>
+                        <div class="arrow">→</div>
+                    </div>
+                    <div class="role-name">Administrator Portal</div>
+                    <div class="role-description">
+                        Comprehensive administrative control center. Manage users, configure settings, generate reports, and oversee all school operations with powerful analytics and insights.
+                    </div>
+                </a>
+
+                <a href="teacher-login.html" class="role-card teacher">
+                    <div class="role-header">
+                        <div class="role-icon">👩‍🏫</div>
+                        <div class="arrow">→</div>
+                    </div>
+                    <div class="role-name">Teacher Portal</div>
+                    <div class="role-description">
+                        Your dedicated teaching workspace. Record assessments, track student progress, manage classes, and communicate effectively with students and parents.
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

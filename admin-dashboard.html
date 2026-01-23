@@ -1,0 +1,2746 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Academus International School</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --dark-light: #334155;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(10px) saturate(120%);
+            border-bottom: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 2px 6px rgba(16,24,40,0.04);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Ensure the raw logo file is capped everywhere to avoid oversized banners */
+        img[src="logo2.png"] {
+            max-width: 280px;
+            max-height: 56px;
+            width: auto;
+            height: auto;
+            display: block;
+        }
+
+        .nav-brand-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .nav-brand-icon {
+            width: 220px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            overflow: hidden;
+            gap: 12px;
+        }
+
+        .nav-brand-icon img {
+            max-width: 100%;
+            max-height: 48px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: var(--bg);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-profile:hover {
+            background: var(--gray-light);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-info-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Main Container */
+        .main-container {
+            margin-top: 64px;
+            padding: 30px;
+            max-width: 1600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            margin-bottom: 30px;
+        }
+
+        .welcome-section {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 30px;
+        }
+
+        .welcome-title {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .welcome-subtitle {
+            font-size: 18px;
+            color: var(--gray);
+            font-weight: 400;
+        }
+
+        /* Stats Grid - Modern Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+        }
+
+        .stat-card.students .stat-icon {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .stat-card.teachers .stat-icon {
+            background: linear-gradient(135deg, #ec4899, #db2777);
+        }
+
+        .stat-card.classes .stat-icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .stat-card.assessments .stat-icon {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .stat-trend.down {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Content Sections */
+        .content-sections {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        /* Activity Feed */
+        .activity-item {
+                display: flex;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            background: var(--bg);
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .activity-item:hover {
+            background: var(--gray-light);
+            border-left-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .activity-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.student {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .activity-icon.assessment {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .activity-icon.teacher {
+            background: linear-gradient(135deg, #ec4899, #db2777);
+            color: white;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .activity-meta {
+            font-size: 13px;
+            color: var(--gray);
+            display: flex;
+            gap: 12px;
+        }
+
+        .activity-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .activity-badge.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .activity-badge.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            gap: 16px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+            text-align: left;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .action-btn.secondary {
+            background: linear-gradient(135deg, var(--secondary), #db2777);
+        }
+
+        .action-btn.success {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+
+        .action-btn.warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+        }
+
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* Students Section */
+        #studentsSection {
+            display: none;
+        }
+
+        .students-container {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .section-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 10px 16px;
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            background: white;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .add-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .students-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .students-table thead th {
+            background: var(--bg);
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray);
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .students-table tbody td {
+            padding: 20px 16px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .students-table tbody tr {
+            transition: all 0.3s;
+        }
+
+        .students-table tbody tr:hover {
+            background: var(--bg);
+        }
+
+        .student-id {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .btn-edit {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .btn-edit:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .btn-delete:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* Teachers Section */
+        #teachersSection {
+            display: none;
+        }
+
+        #reportsSection {
+            display: none;
+        }
+
+        /* Modal Styles */
+        #addStudentModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .modal-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg);
+            cursor: pointer;
+            font-size: 24px;
+            color: var(--gray);
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: var(--gray-light);
+            color: var(--dark);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--bg);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-light);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .content-sections {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .top-nav {
+                padding: 0 16px;
+            }
+
+            .main-container {
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 18px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <div class="nav-brand-icon"><img src="logo2.png" alt="Academus International School emblem featuring a gold and navy open book with a golden eagle and globe symbol, representing global education and learning"></div>
+        </div>
+        <div class="nav-actions">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-info-text">
+            <div class="user-name" id="userName">Admin User</div>
+            <div class="user-role">Administrator</div>
+        </div>
+            </div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+    </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Dashboard Section -->
+        <div id="dashboardSection">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h1 class="welcome-title">Welcome Back! 👋</h1>
+                <p class="welcome-subtitle">Here's what's happening with your school today</p>
+            </div>
+
+            <!-- Stats Grid -->
+        <div class="stats-grid">
+                <div class="stat-card students">
+                    <div class="stat-card-header">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-trend">
+                            <span>↑</span>
+                            <span>Active</span>
+                        </div>
+                    </div>
+                <div class="stat-value" id="totalStudentsCount">-</div>
+                    <div class="stat-label">Total Students</div>
+                    <div style="margin-top: 12px; font-size: 13px; color: var(--gray);" id="studentsChange">Calculating...</div>
+            </div>
+
+                <div class="stat-card teachers">
+                    <div class="stat-card-header">
+                        <div class="stat-icon">👩‍🏫</div>
+                        <div class="stat-trend">
+                            <span>↑</span>
+                            <span>Active</span>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="totalTeachersCount">-</div>
+                <div class="stat-label">Total Teachers</div>
+                    <div style="margin-top: 12px; font-size: 13px; color: var(--gray);">All active</div>
+            </div>
+
+                <div class="stat-card classes">
+                    <div class="stat-card-header">
+                        <div class="stat-icon">🏫</div>
+                        <div class="stat-trend">
+                            <span>✓</span>
+                            <span>Active</span>
+                        </div>
+                    </div>
+                <div class="stat-value">32</div>
+                    <div class="stat-label">Active Classes</div>
+                    <div style="margin-top: 12px; font-size: 13px; color: var(--gray);">All classes operational</div>
+            </div>
+
+                <div class="stat-card assessments">
+                    <div class="stat-card-header">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-trend down">
+                            <span>!</span>
+                            <span>Pending</span>
+                        </div>
+                    </div>
+                <div class="stat-value">156</div>
+                    <div class="stat-label">Pending Assessments</div>
+                    <div style="margin-top: 12px; font-size: 13px; color: var(--gray);">Due this week</div>
+            </div>
+        </div>
+
+            <!-- Content Sections -->
+            <div class="content-sections">
+                <!-- Recent Activities -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <div class="section-icon">📊</div>
+                            Recent Activities
+                        </div>
+                    </div>
+                    <div id="activitiesList">
+                        <div class="activity-item">
+                            <div class="activity-icon student">👤</div>
+                            <div class="activity-content">
+                                <div class="activity-title">New student registered</div>
+                                <div class="activity-meta">
+                                    <span>John Doe</span>
+                                    <span>•</span>
+                                    <span>2 hours ago</span>
+                                    <span class="activity-badge active">Active</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon assessment">📝</div>
+                            <div class="activity-content">
+                                <div class="activity-title">Assessment submitted</div>
+                                <div class="activity-meta">
+                                    <span>Jane Smith</span>
+                                    <span>•</span>
+                                    <span>5 hours ago</span>
+                                    <span class="activity-badge active">Active</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon teacher">👩‍🏫</div>
+                            <div class="activity-content">
+                                <div class="activity-title">Teacher account created</div>
+                                <div class="activity-meta">
+                                    <span>Admin</span>
+                                    <span>•</span>
+                                    <span>1 day ago</span>
+                                    <span class="activity-badge pending">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon assessment">📊</div>
+                            <div class="activity-content">
+                                <div class="activity-title">Report generated</div>
+                                <div class="activity-meta">
+                                    <span>System</span>
+                                    <span>•</span>
+                                    <span>2 days ago</span>
+                                    <span class="activity-badge active">Active</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <div class="section-icon">⚡</div>
+                            Quick Actions
+                        </div>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="action-btn" onclick="showAddStudentModal()">
+                            <div class="action-icon">➕</div>
+                            <span>Add New Student</span>
+                        </button>
+                        <button class="action-btn secondary" onclick="showSection('students')">
+                            <div class="action-icon">👥</div>
+                            <span>View All Students</span>
+                        </button>
+                        <button class="action-btn" onclick="showAddTeacherModal()" style="background: linear-gradient(135deg, #ec4899, #db2777);">
+                            <div class="action-icon">➕</div>
+                            <span>Add New Teacher</span>
+                        </button>
+                        <button class="action-btn secondary" onclick="showSection('teachers')" style="background: linear-gradient(135deg, #ec4899, #db2777);">
+                            <div class="action-icon">👩‍🏫</div>
+                            <span>View All Teachers</span>
+                        </button>
+                        <button class="action-btn success" onclick="window.location.href='admin-management.html'">
+                            <div class="action-icon">⚙️</div>
+                            <span>Go to Management</span>
+                        </button>
+                        <button class="action-btn warning" onclick="showSection('reports')">
+                            <div class="action-icon">📄</div>
+                            <span>Generate Report</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Teacher Details Section -->
+            <div class="section-card" style="margin-top: 24px;">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon">👩‍🏫</div>
+                        Teacher Details
+                    </div>
+                    <button class="add-btn" onclick="showAddTeacherModal()" style="padding: 10px 20px; font-size: 14px;">
+                        <span>➕</span>
+                        <span>Add New Teacher</span>
+                    </button>
+                </div>
+                <div id="teachersDetailsList" style="margin-top: 20px;">
+                    <div style="text-align: center; padding: 40px; color: var(--gray);">Loading teachers...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students Section -->
+        <div id="studentsSection" style="display: none;">
+            <div class="students-container">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon">👥</div>
+                        Students Management
+                    </div>
+                </div>
+
+                <div class="section-toolbar">
+                    <div class="filters">
+                        <select id="filterClass" class="filter-select" onchange="loadStudentsList()">
+                            <option value="">All Classes</option>
+                            <option value="1">Class 1</option>
+                            <option value="2">Class 2</option>
+                            <option value="3">Class 3</option>
+                            <option value="4">Class 4</option>
+                            <option value="5">Class 5</option>
+                            <option value="6">Class 6</option>
+                            <option value="7">Class 7</option>
+                            <option value="8">Class 8</option>
+                            <option value="9">Class 9</option>
+                            <option value="10">Class 10</option>
+                        </select>
+                        <select id="filterSection" class="filter-select" onchange="loadStudentsList()">
+                            <option value="">All Sections</option>
+                            <option value="A">Section A</option>
+                            <option value="B">Section B</option>
+                            <option value="C">Section C</option>
+                            <option value="D">Section D</option>
+                            <option value="E">Section E</option>
+                        </select>
+                        <div style="padding: 10px 16px; background: var(--bg); border-radius: 12px; font-weight: 600; color: var(--primary);">
+                            💡 Total: <span id="studentCount">0</span>
+                        </div>
+                    </div>
+                    <button class="add-btn" onclick="showAddStudentModal()">
+                        <span>➕</span>
+                        <span>Add New Student</span>
+                    </button>
+                </div>
+
+                <div id="studentsList">
+                    <table class="students-table">
+                    <thead>
+                        <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Phone</th>
+                                <th>Address</th>
+                                <th>Parent's Name</th>
+                                <th>Actions</th>
+                        </tr>
+                    </thead>
+                        <tbody id="studentsTableBody">
+                        <tr>
+                                <td colspan="8" style="text-align: center; padding: 40px; color: var(--gray);">Loading students...</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div id="reportsSection" style="display: none;">
+            <div class="students-container">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon">📄</div>
+                        Generate Reports
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 24px; padding: 24px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1)); border-radius: 16px; border-left: 4px solid var(--primary);">
+                    <h3 style="margin-bottom: 12px; color: var(--dark); font-size: 18px;">📋 Report Generation</h3>
+                    <p style="color: var(--gray); font-size: 14px; line-height: 1.6;">
+                        Generate professional PDF report cards for students using the standardized format. 
+                        Reports include student information, subject assessments, quantitative scores, and teacher remarks.
+                    </p>
+                </div>
+
+                <div class="section-toolbar" style="margin-bottom: 24px;">
+                    <div class="filters">
+                        <select id="reportFilterClass" class="filter-select" onchange="loadReportsStudentList()">
+                            <option value="">All Classes</option>
+                            <option value="1">Class 1</option>
+                            <option value="2">Class 2</option>
+                            <option value="3">Class 3</option>
+                            <option value="4">Class 4</option>
+                            <option value="5">Class 5</option>
+                            <option value="6">Class 6</option>
+                            <option value="7">Class 7</option>
+                            <option value="8">Class 8</option>
+                            <option value="9">Class 9</option>
+                            <option value="10">Class 10</option>
+                        </select>
+                        <select id="reportFilterSection" class="filter-select" onchange="loadReportsStudentList()">
+                            <option value="">All Sections</option>
+                            <option value="A">Section A</option>
+                            <option value="B">Section B</option>
+                            <option value="C">Section C</option>
+                            <option value="D">Section D</option>
+                            <option value="E">Section E</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success" onclick="printAllStudentReportsFromDashboard()" style="padding: 12px 24px; font-size: 15px;">
+                        📄 Generate All Reports
+                    </button>
+                </div>
+
+                <div id="reportsStudentList">
+                    <table class="students-table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportsTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 40px; color: var(--gray);">Loading students...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teachers Section -->
+        <div id="teachersSection" style="display: none;">
+            <div class="students-container">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon">👩‍🏫</div>
+                        Teachers Management
+                    </div>
+                    <button class="add-btn" onclick="showAddTeacherModal()">
+                        <span>➕</span>
+                        <span>Add New Teacher</span>
+                    </button>
+                </div>
+
+                <div class="section-toolbar">
+                    <div class="filters">
+                        <div style="padding: 10px 16px; background: var(--bg); border-radius: 12px; font-weight: 600; color: var(--primary);">
+                            💡 Total: <span id="teacherCount">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Subject</th>
+                                <th>Portal ID</th>
+                                <th>Assigned Classes</th>
+                                <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="teachersTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">Loading teachers...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            </div>
+                </div>
+            </div>
+
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" onclick="if(event.target.id === 'addStudentModal') closeAddStudentModal();">
+        <div class="modal-content" onclick="event.stopPropagation();">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Student</h2>
+                <button class="modal-close" onclick="closeAddStudentModal()">×</button>
+                    </div>
+            <div class="form-group">
+                <label class="form-label">Student ID Number *</label>
+                <input type="text" id="newStudentId" class="form-input" placeholder="Enter Student ID (e.g., STU001)" required>
+                    </div>
+            <div class="form-group">
+                <label class="form-label">Full Name *</label>
+                <input type="text" id="newStudentName" class="form-input" placeholder="Enter student name" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Class *</label>
+                    <select id="newStudentClass" class="form-select" required>
+                                <option value="">Select Class</option>
+                                <option value="1">Class 1</option>
+                                <option value="2">Class 2</option>
+                                <option value="3">Class 3</option>
+                                <option value="4">Class 4</option>
+                                <option value="5">Class 5</option>
+                                <option value="6">Class 6</option>
+                                <option value="7">Class 7</option>
+                                <option value="8">Class 8</option>
+                                <option value="9">Class 9</option>
+                                <option value="10">Class 10</option>
+                            </select>
+                        </div>
+                <div class="form-group">
+                    <label class="form-label">Section *</label>
+                    <select id="newStudentSection" class="form-select" required>
+                                <option value="">Select Section</option>
+                                <option value="A">Section A</option>
+                                <option value="B">Section B</option>
+                                <option value="C">Section C</option>
+                                <option value="D">Section D</option>
+                                <option value="E">Section E</option>
+                            </select>
+                        </div>
+                    </div>
+            <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" id="newStudentPhone" class="form-input" placeholder="e.g., +1234567890">
+                    </div>
+            <div class="form-group">
+                <label class="form-label">Parent's Name</label>
+                <input type="text" id="newStudentParentName" class="form-input" placeholder="Enter parent's name">
+                    </div>
+            <div class="form-group">
+                <label class="form-label">Address</label>
+                <input type="text" id="newStudentAddress" class="form-input" placeholder="Enter address">
+                    </div>
+            <div class="modal-actions">
+                        <button class="btn btn-primary" onclick="addStudent()" style="flex: 1;">Add Student</button>
+                <button class="btn btn-secondary" onclick="closeAddStudentModal()" style="flex: 1;">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+    <!-- Add Teacher Modal -->
+    <div id="addTeacherModal" onclick="if(event.target.id === 'addTeacherModal') closeAddTeacherModal();" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 20px;">
+        <div class="modal-content" onclick="event.stopPropagation();">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Teacher</h2>
+                <button class="modal-close" onclick="closeAddTeacherModal()">×</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Full Name *</label>
+                <input type="text" id="newTeacherName" class="form-input" placeholder="Enter teacher name" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address *</label>
+                <input type="email" id="newTeacherEmail" class="form-input" placeholder="Enter email address" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Subject *</label>
+                <select id="newTeacherSubject" class="form-select" required>
+                    <option value="">Select Subject</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="English">English</option>
+                    <option value="Science">Science</option>
+                    <option value="Social Studies">Social Studies</option>
+                    <option value="Art">Art</option>
+                    <option value="Physical Education">Physical Education</option>
+                    <option value="Music">Music</option>
+                    <option value="Computer Science">Computer Science</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Portal ID</label>
+                <input type="text" id="newTeacherPortalId" class="form-input" placeholder="Auto-generated if left empty">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="newTeacherPassword" class="form-input" placeholder="Default: teacher123">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Assign Classes (Optional - can be assigned later)</label>
+                <div id="classAssignments" style="margin-top: 10px;">
+                    <div class="form-row" style="margin-bottom: 10px;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <select id="newTeacherClass1" class="form-select">
+                                <option value="">Select Class</option>
+                            <option value="1">Class 1</option>
+                            <option value="2">Class 2</option>
+                            <option value="3">Class 3</option>
+                            <option value="4">Class 4</option>
+                            <option value="5">Class 5</option>
+                            <option value="6">Class 6</option>
+                            <option value="7">Class 7</option>
+                            <option value="8">Class 8</option>
+                            <option value="9">Class 9</option>
+                            <option value="10">Class 10</option>
+                        </select>
+                    </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <select id="newTeacherSection1" class="form-select">
+                                <option value="">Select Section</option>
+                                <option value="A">Section A</option>
+                                <option value="B">Section B</option>
+                                <option value="C">Section C</option>
+                                <option value="D">Section D</option>
+                                <option value="E">Section E</option>
+                        </select>
+                    </div>
+                </div>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="addClassAssignmentRow()" style="margin-top: 10px; width: 100%;">+ Add Another Class</button>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="addTeacher()" style="flex: 1;">Add Teacher</button>
+                <button class="btn btn-secondary" onclick="closeAddTeacherModal()" style="flex: 1;">Cancel</button>
+        </div>
+        </div>
+            </div>
+
+    <!-- Assign Classes Modal -->
+    <div id="assignClassesModal" onclick="if(event.target.id === 'assignClassesModal') closeAssignClassesModal();" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 20px;">
+        <div class="modal-content" onclick="event.stopPropagation();">
+            <div class="modal-header">
+                <h2 class="modal-title">Assign Classes to Teacher</h2>
+                <button class="modal-close" onclick="closeAssignClassesModal()">×</button>
+            </div>
+            <div id="assignClassesContent">
+                <div class="form-group">
+                    <label class="form-label">Teacher</label>
+                    <input type="text" id="assignTeacherName" class="form-input" readonly>
+                    <input type="hidden" id="assignTeacherId">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Current Classes</label>
+                    <div id="currentClassesList" style="margin-top: 10px; padding: 15px; background: var(--bg); border-radius: 12px; min-height: 50px;">
+                        <div style="color: var(--gray); font-style: italic;">No classes assigned</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Add New Class</label>
+                    <div class="form-row">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <select id="assignClass" class="form-select">
+                                <option value="">Select Class</option>
+                            <option value="1">Class 1</option>
+                            <option value="2">Class 2</option>
+                            <option value="3">Class 3</option>
+                            <option value="4">Class 4</option>
+                            <option value="5">Class 5</option>
+                            <option value="6">Class 6</option>
+                            <option value="7">Class 7</option>
+                            <option value="8">Class 8</option>
+                            <option value="9">Class 9</option>
+                            <option value="10">Class 10</option>
+                        </select>
+                    </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <select id="assignSection" class="form-select">
+                                <option value="">Select Section</option>
+                                <option value="A">Section A</option>
+                                <option value="B">Section B</option>
+                                <option value="C">Section C</option>
+                                <option value="D">Section D</option>
+                                <option value="E">Section E</option>
+                            </select>
+                </div>
+                        <button type="button" class="btn btn-primary" onclick="addClassToTeacher()" style="white-space: nowrap;">Add Class</button>
+                </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeAssignClassesModal()" style="flex: 1;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data-storage.js"></script>
+    <!-- html2pdf (uses html2canvas & jsPDF internally) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        // Initialize on page load
+        function initializePage() {
+            // Check if user is logged in
+            if (!sessionStorage.getItem('adminLoggedIn')) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            // Set user name and avatar
+            const userEmail = sessionStorage.getItem('userEmail');
+            if (userEmail) {
+                const userNameEl = document.getElementById('userName');
+                const userAvatarEl = document.getElementById('userAvatar');
+                if (userNameEl) {
+                    userNameEl.textContent = userEmail;
+                }
+                if (userAvatarEl) {
+                    userAvatarEl.textContent = userEmail.charAt(0).toUpperCase();
+                }
+            }
+
+            // Wait for data-storage.js to load, then update stats
+            let attempts = 0;
+            const checkDataStorage = setInterval(function() {
+                attempts++;
+                
+                if (typeof schoolData !== 'undefined') {
+                    console.log('Data storage found! Updating stats...');
+                    clearInterval(checkDataStorage);
+                    
+                    try {
+                        const data = schoolData.getData();
+                        console.log('Initial data check - Students:', data.students ? data.students.length : 0);
+                        
+                        // Update stats
+                        updateStats();
+                    } catch (e) {
+                        console.error('Error checking initial data:', e);
+                    }
+                } else if (attempts > 10) {
+                    console.error('data-storage.js not loaded after 10 attempts!');
+                    clearInterval(checkDataStorage);
+                    document.getElementById('totalStudentsCount').textContent = 'Error';
+                    document.getElementById('studentsChange').textContent = 'Data not loaded';
+                }
+            }, 200);
+        }
+
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            initializePage();
+        }
+        
+        // Navigation handlers
+        function showSection(section) {
+            const dashboardSection = document.getElementById('dashboardSection');
+            const studentsSection = document.getElementById('studentsSection');
+            const teachersSection = document.getElementById('teachersSection');
+            const reportsSection = document.getElementById('reportsSection');
+
+            // Hide all sections
+            if (dashboardSection) dashboardSection.style.display = 'none';
+            if (studentsSection) studentsSection.style.display = 'none';
+            if (teachersSection) teachersSection.style.display = 'none';
+            if (reportsSection) reportsSection.style.display = 'none';
+
+            // Show selected section
+            if (section === 'dashboard') {
+                if (dashboardSection) {
+                    dashboardSection.style.display = 'block';
+                    if (typeof loadTeachersDetailsList === 'function') {
+                        loadTeachersDetailsList();
+                    }
+                }
+            } else if (section === 'students') {
+                if (studentsSection) {
+                    studentsSection.style.display = 'block';
+                    const filterClass = document.getElementById('filterClass');
+                    const filterSection = document.getElementById('filterSection');
+                    if (filterClass) filterClass.value = '';
+                    if (filterSection) filterSection.value = '';
+            setTimeout(() => {
+                        if (typeof loadStudentsList === 'function') {
+                            loadStudentsList();
+                        }
+                    }, 100);
+                }
+            } else if (section === 'teachers') {
+                if (teachersSection) {
+                    teachersSection.style.display = 'block';
+                    if (typeof loadTeachersList === 'function') {
+                        loadTeachersList();
+                    }
+                }
+            } else if (section === 'reports') {
+                if (reportsSection) {
+                    reportsSection.style.display = 'block';
+                    setTimeout(() => {
+                        if (typeof loadReportsStudentList === 'function') {
+                            loadReportsStudentList();
+                        }
+                    }, 100);
+                }
+            }
+        }
+
+        function showAddStudentModal() {
+            const modal = document.getElementById('addStudentModal');
+            if (!modal) {
+                alert('Error: Modal not found. Please refresh the page.');
+                return;
+            }
+            
+            modal.style.display = 'flex';
+            
+            // Clear all fields
+            const idField = document.getElementById('newStudentId');
+            const nameField = document.getElementById('newStudentName');
+            const classField = document.getElementById('newStudentClass');
+            const sectionField = document.getElementById('newStudentSection');
+            
+            if (idField) idField.value = '';
+            if (nameField) nameField.value = '';
+            if (classField) classField.value = '';
+            if (sectionField) sectionField.value = '';
+            
+            setTimeout(() => {
+                if (idField) idField.focus();
+            }, 100);
+        }
+
+        function closeAddStudentModal() {
+            const modal = document.getElementById('addStudentModal');
+            if (modal) modal.style.display = 'none';
+            
+            const idField = document.getElementById('newStudentId');
+            const nameField = document.getElementById('newStudentName');
+            const classField = document.getElementById('newStudentClass');
+            const sectionField = document.getElementById('newStudentSection');
+            const phoneField = document.getElementById('newStudentPhone');
+            const addressField = document.getElementById('newStudentAddress');
+            const parentsNameField = document.getElementById('newStudentParentName');
+            
+            if (idField) idField.value = '';
+            if (nameField) nameField.value = '';
+            if (classField) classField.value = '';
+            if (sectionField) sectionField.value = '';
+            if (phoneField) phoneField.value = '';
+            if (addressField) addressField.value = '';
+            if (parentsNameField) parentsNameField.value = '';
+            
+            const addBtn = document.querySelector('#addStudentModal .btn-primary');
+            if (addBtn) {
+                addBtn.textContent = 'Add Student';
+                addBtn.onclick = addStudent;
+            }
+        }
+
+        function loadStudentsList() {
+            console.log('loadStudentsList called');
+            
+            if (typeof schoolData === 'undefined') {
+                console.error('data-storage.js not loaded!');
+                const tbody = document.getElementById('studentsTableBody');
+                if (tbody) {
+                    tbody.innerHTML = 
+                        '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--danger);">Error: Data storage not loaded. Please refresh the page.</td></tr>';
+                }
+                return;
+            }
+            
+            const tbody = document.getElementById('studentsTableBody');
+            if (!tbody) {
+                console.error('studentsTableBody element not found!');
+                return;
+            }
+            
+            try {
+                const data = schoolData.getData();
+                if (!data) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--danger);">Error: Could not load data.</td></tr>';
+                    return;
+                }
+
+                if (!Array.isArray(data.students)) {
+                    data.students = [];
+                    schoolData.saveData(data);
+                }
+
+                const classFilter = (document.getElementById('filterClass') || {}).value || '';
+                const sectionFilter = (document.getElementById('filterSection') || {}).value || '';
+
+                let students = [];
+                try {
+                    students = schoolData.getStudentsByClassSection(classFilter, sectionFilter) || [];
+                    if (!Array.isArray(students)) {
+                        students = [];
+                    }
+                } catch (errStudents) {
+                    console.error('Error getting students from storage:', errStudents);
+                    students = [];
+                }
+
+                const countElement = document.getElementById('studentCount');
+                if (countElement) countElement.textContent = students.length;
+
+                if (students.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--gray);">No students found. Use the "Add New Student" button to add one.</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                students.forEach((student) => {
+                    html += `<tr>
+                        <td><span class="student-id">${student.studentId || 'N/A'}</span></td>
+                        <td><strong>${student.name || 'N/A'}</strong></td>
+                        <td>Class ${student.class || 'N/A'}</td>
+                        <td>Section ${student.section || 'N/A'}</td>
+                        <td>${student.phone || '-'}</td>
+                        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${student.address || ''}">${student.address || '-'}</td>
+                        <td>${student.parentsName || '-'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon btn-edit" onclick="editStudent('${student.id}')" title="Edit">✏️</button>
+                                <button class="btn-icon btn-delete" onclick="deleteStudent('${student.id}')" title="Delete">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>`;
+                });
+
+                tbody.innerHTML = html;
+                console.log('Table updated with', students.length, 'students');
+                
+            } catch (error) {
+                console.error('Error loading students:', error);
+                if (tbody) {
+                    tbody.innerHTML = 
+                        '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--danger);">Error loading students: ' + (error.message || 'Unknown error') + '</td></tr>';
+                }
+            }
+        }
+        
+        window.loadStudentsList = loadStudentsList;
+
+        function loadTeachersList() {
+            console.log('loadTeachersList called');
+
+            if (typeof schoolData === 'undefined') {
+                console.error('data-storage.js not loaded!');
+                const container = document.getElementById('teachersList');
+                if (container) {
+                    container.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--danger);">Error: Data storage not loaded. Please refresh the page.</p>';
+                }
+                return;
+            }
+
+    const container = document.getElementById('teachersList');
+    if (!container) {
+        console.error('teachersList element not found!');
+        return;
+    }
+
+    const data = schoolData.getData();
+    if (!data) {
+                container.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--danger);">Error: Could not load data.</p>';
+        return;
+    }
+
+    if (!Array.isArray(data.teachers)) {
+        data.teachers = [];
+        schoolData.saveData(data);
+    }
+
+            const teachers = schoolData.getAllTeachers();
+
+            if (!Array.isArray(teachers)) {
+                container.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--danger);">Error: Invalid teachers data.</p>';
+                return;
+            }
+
+            if (teachers.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 40px; color: var(--gray);">No teachers found.</p>';
+                return;
+            }
+
+            let html = `<table class="students-table">
+                <thead>
+                    <tr>
+                        <th>Teacher Name</th>
+                        <th>Subject</th>
+                        <th>Email</th>
+                        <th>Assigned Classes</th>
+                        <th>Schedule</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            teachers.forEach(teacher => {
+                const classes = teacher.classes || [];
+                const schedule = teacher.schedule || [];
+
+                html += `<tr>
+                    <td><strong style="color: var(--primary);">${teacher.name}</strong></td>
+                    <td><span style="background: rgba(99, 102, 241, 0.1); color: var(--primary); padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">${teacher.subject}</span></td>
+                    <td style="font-size: 14px; color: var(--gray);">${teacher.email}</td>
+                    <td>`;
+
+                if (classes.length === 0) {
+                    html += '<span style="color: var(--gray); font-style: italic;">None</span>';
+                } else {
+                    classes.forEach((cls, idx) => {
+                        if (idx > 0) html += ' ';
+                        html += `<span style="background: var(--primary); color: white; padding: 6px 12px; border-radius: 12px; font-size: 11px; margin-right: 6px; display:inline-block;">${cls.class}${cls.section}</span>`;
+                    });
+                }
+
+                html += `</td>
+                    <td>`;
+
+                if (schedule.length === 0) {
+                    html += '<span style="color: var(--gray); font-style: italic;">No schedule</span>';
+                } else {
+                    schedule.forEach((s, idx) => {
+                        html += `<div style="font-size:12px; color:var(--dark); margin-bottom:4px;">${s.day}: ${s.start} - ${s.end} (Class ${s.class}${s.section})</div>`;
+                    });
+                }
+
+                html += `</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon btn-edit" onclick="editTeacherCredentials('${teacher.id}')" title="Edit Credentials">🔑</button>
+                            <button class="btn-icon btn-edit" onclick="window.location.href='admin-management.html'" title="Manage">⚙️</button>
+                        </div>
+                    </td>
+                </tr>`;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function editTeacherCredentials(teacherId) {
+            const data = schoolData.getData();
+            const teacher = data.teachers.find(t => t.id === teacherId);
+            
+            if (!teacher) return;
+            
+            const newPortalId = prompt('Enter new Portal ID:', teacher.portalId || '');
+            if (newPortalId === null) return;
+            
+            const newPassword = prompt('Enter new Password:', teacher.password || '');
+            if (newPassword === null) return;
+            
+            if (!newPortalId.trim() || !newPassword.trim()) {
+                alert('Portal ID and Password cannot be empty!');
+                return;
+            }
+            
+            const idExists = data.teachers.some(t => t.id !== teacherId && t.portalId === newPortalId.trim());
+            if (idExists) {
+                alert('Portal ID already exists. Please use a different ID.');
+                return;
+            }
+            
+            teacher.portalId = newPortalId.trim();
+            teacher.password = newPassword.trim();
+            
+            schoolData.saveData(data);
+            alert('Teacher credentials updated successfully!');
+            loadTeachersList();
+        }
+
+        function addStudent() {
+            console.log('addStudent function called');
+            
+            if (typeof schoolData === 'undefined') {
+                alert('Error: Data storage not loaded. Please refresh the page.');
+                return;
+            }
+
+            const idField = document.getElementById('newStudentId');
+            const nameField = document.getElementById('newStudentName');
+            const classField = document.getElementById('newStudentClass');
+            const sectionField = document.getElementById('newStudentSection');
+
+            if (!idField || !nameField || !classField || !sectionField) {
+                alert('Error: Form fields not found. Please refresh the page.');
+                return;
+            }
+
+            const studentId = idField.value.trim();
+            const name = nameField.value.trim();
+            const classNum = classField.value;
+            const section = sectionField.value;
+
+            if (!studentId) {
+                alert('Please enter Student ID');
+                idField.focus();
+                return;
+            }
+
+            if (!name) {
+                alert('Please enter Student Name');
+                nameField.focus();
+                return;
+            }
+
+            if (!classNum) {
+                alert('Please select Class');
+                classField.focus();
+                return;
+            }
+
+            if (!section) {
+                alert('Please select Section');
+                sectionField.focus();
+                return;
+            }
+
+            try {
+                const data = schoolData.getData();
+                
+                if (!data) {
+                    alert('Error: Could not load data. Please refresh the page.');
+                    return;
+                }
+                
+                if (!data.students) {
+                    data.students = [];
+                }
+
+                const idExists = data.students.some(s => s.studentId && s.studentId.toLowerCase() === studentId.toLowerCase());
+                if (idExists) {
+                    alert('Student ID already exists. Please use a different ID.');
+                    idField.focus();
+                    return;
+                }
+
+                const phoneField = document.getElementById('newStudentPhone');
+                const addressField = document.getElementById('newStudentAddress');
+                const parentsNameField = document.getElementById('newStudentParentName');
+                const phone = phoneField ? phoneField.value.trim() : '';
+                const address = addressField ? addressField.value.trim() : '';
+                const parentsName = parentsNameField ? parentsNameField.value.trim() : '';
+
+                const newStudent = {
+                    id: 's' + Date.now(),
+                    studentId: studentId,
+                    name: name,
+                    class: classNum,
+                    section: section,
+                    phone: phone || '',
+                    address: address || '',
+                    parentsName: parentsName || ''
+                };
+                
+                data.students.push(newStudent);
+                schoolData.saveData(data);
+                
+                console.log('Student saved. New count:', data.students.length);
+
+                alert('Student added successfully!');
+                closeAddStudentModal();
+                
+                setTimeout(() => {
+                    if (typeof updateStats === 'function') {
+                        updateStats();
+                    }
+                }, 100);
+                
+                if (typeof loadStudentsList === 'function') {
+                    setTimeout(() => {
+                        loadStudentsList();
+                    }, 200);
+                }
+                
+                const studentsSection = document.getElementById('studentsSection');
+                if (studentsSection && studentsSection.style.display !== 'none') {
+                    const filterClass = document.getElementById('filterClass');
+                    const filterSection = document.getElementById('filterSection');
+                    if (filterClass) filterClass.value = '';
+                    if (filterSection) filterSection.value = '';
+                    setTimeout(() => {
+                        loadStudentsList();
+                    }, 300);
+                }
+            } catch (error) {
+                console.error('Error adding student:', error);
+                alert('Error adding student: ' + error.message);
+            }
+        }
+
+        function deleteStudent(studentId) {
+            if (!confirm('Are you sure you want to delete this student? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const data = schoolData.getData();
+                data.students = data.students.filter(s => s.id !== studentId);
+                schoolData.saveData(data);
+                
+                alert('Student deleted successfully!');
+                loadStudentsList();
+                updateStats();
+            } catch (error) {
+                console.error('Error deleting student:', error);
+                alert('Error deleting student: ' + error.message);
+            }
+        }
+
+        function editStudent(studentId) {
+            const data = schoolData.getData();
+            const student = data.students.find(s => s.id === studentId);
+
+            if (!student) {
+                alert('Student not found!');
+                return;
+            }
+
+            showAddStudentModal();
+
+            setTimeout(() => {
+                const idField = document.getElementById('newStudentId');
+                const nameField = document.getElementById('newStudentName');
+                const classField = document.getElementById('newStudentClass');
+                const sectionField = document.getElementById('newStudentSection');
+                const phoneField = document.getElementById('newStudentPhone');
+                const addressField = document.getElementById('newStudentAddress');
+                const parentsNameField = document.getElementById('newStudentParentName');
+
+                if (idField) idField.value = student.studentId || '';
+                if (nameField) nameField.value = student.name || '';
+                if (classField) classField.value = student.class || '';
+                if (sectionField) sectionField.value = student.section || '';
+                if (phoneField) phoneField.value = student.phone || '';
+                if (addressField) addressField.value = student.address || '';
+                if (parentsNameField) parentsNameField.value = student.parentsName || '';
+
+                const addBtn = document.querySelector('#addStudentModal .btn-primary');
+                if (addBtn) {
+                    addBtn.textContent = 'Update Student';
+                    addBtn.onclick = function() { updateStudentFromModal(studentId); };
+                }
+            }, 250);
+        }
+
+        function updateStudentFromModal(studentId) {
+            if (typeof schoolData === 'undefined') {
+                alert('Error: Data storage not loaded.');
+                return;
+            }
+
+            const studentIdValue = document.getElementById('newStudentId').value.trim();
+            const name = document.getElementById('newStudentName').value.trim();
+            const classNum = document.getElementById('newStudentClass').value;
+            const section = document.getElementById('newStudentSection').value;
+            const phone = (document.getElementById('newStudentPhone') || {}).value || '';
+            const address = (document.getElementById('newStudentAddress') || {}).value || '';
+            const parentsName = (document.getElementById('newStudentParentName') || {}).value || '';
+
+            if (!studentIdValue || !name || !classNum || !section) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            try {
+                const data = schoolData.getData();
+                const student = data.students.find(s => s.id === studentId);
+
+                if (student) {
+                    const idConflict = data.students.some(s => s.id !== studentId && s.studentId && s.studentId.toLowerCase() === studentIdValue.toLowerCase());
+                    if (idConflict) {
+                        alert('Student ID already exists. Please use a different ID.');
+                        return;
+                    }
+
+                    student.studentId = studentIdValue;
+                    student.name = name;
+                    student.class = classNum;
+                    student.section = section;
+                    student.phone = phone || '';
+                    student.address = address || '';
+                    student.parentsName = parentsName || '';
+
+                    schoolData.saveData(data);
+                    alert('Student updated successfully!');
+                    closeAddStudentModal();
+                    if (typeof updateStats === 'function') updateStats();
+                    if (typeof loadStudentsList === 'function') loadStudentsList();
+                } else {
+                    alert('Student not found!');
+                }
+            } catch (error) {
+                console.error('Error updating student from modal:', error);
+                alert('Error updating student: ' + error.message);
+            }
+        }
+
+        function updateStats() {
+            console.log('updateStats called');
+            
+            if (typeof schoolData === 'undefined') {
+                console.error('schoolData not available for stats update');
+                const totalStudentsEl = document.getElementById('totalStudentsCount');
+                const studentsChangeEl = document.getElementById('studentsChange');
+                if (totalStudentsEl) totalStudentsEl.textContent = '0';
+                if (studentsChangeEl) studentsChangeEl.textContent = 'Data not loaded';
+                return;
+            }
+            
+            try {
+                const data = schoolData.getData();
+                
+                if (!data) {
+                    console.error('No data returned');
+                    return;
+                }
+                
+                const studentCount = (data.students && data.students.length) || 0;
+                const teacherCount = (data.teachers && data.teachers.length) || 0;
+                
+                const totalStudentsEl = document.getElementById('totalStudentsCount');
+                if (totalStudentsEl) {
+                    totalStudentsEl.textContent = studentCount.toLocaleString();
+                }
+                
+                const studentsChangeEl = document.getElementById('studentsChange');
+                if (studentsChangeEl) {
+                    if (studentCount > 0) {
+                        studentsChangeEl.textContent = `${studentCount} registered student${studentCount !== 1 ? 's' : ''}`;
+                    } else {
+                        studentsChangeEl.textContent = 'No students registered yet';
+                    }
+                }
+
+                const totalTeachersEl = document.getElementById('totalTeachersCount');
+                if (totalTeachersEl) {
+                    totalTeachersEl.textContent = teacherCount.toLocaleString();
+                }
+                
+                console.log('Stats updated successfully - Students:', studentCount, 'Teachers:', teacherCount);
+            } catch (error) {
+                console.error('Error updating stats:', error);
+                
+                const totalStudentsEl = document.getElementById('totalStudentsCount');
+                const studentsChangeEl = document.getElementById('studentsChange');
+                if (totalStudentsEl) totalStudentsEl.textContent = 'Error';
+                if (studentsChangeEl) studentsChangeEl.textContent = 'Error loading data';
+            }
+        }
+        
+        window.updateStats = updateStats;
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'school-portal.html';
+        }
+
+        // Initialize stats on load
+        window.addEventListener('DOMContentLoaded', function() {
+            if (typeof schoolData !== 'undefined') {
+                updateStats();
+                loadTeachersDetailsList();
+            } else {
+                console.error('data-storage.js not loaded!');
+            }
+        });
+
+        // Teacher Management Functions
+        function loadTeachersDetailsList() {
+            const container = document.getElementById('teachersDetailsList');
+            if (!container) return;
+
+            if (typeof schoolData === 'undefined') {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--danger);">Error: Data storage not loaded.</div>';
+                return;
+            }
+
+            try {
+                const teachers = schoolData.getAllTeachers() || [];
+                
+                if (teachers.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--gray);">No teachers found. Add your first teacher!</div>';
+                    return;
+                }
+
+                let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">';
+                
+                teachers.forEach(teacher => {
+                    const classes = teacher.classes || [];
+                    const classesText = classes.length > 0 
+                        ? classes.map(c => `${c.class}${c.section}`).join(', ')
+                        : 'No classes assigned';
+                    
+                    html += `
+                        <div style="background: var(--bg); padding: 20px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #ec4899, #db2777); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; font-weight: 700;">${teacher.name.charAt(0).toUpperCase()}</div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: var(--dark); margin-bottom: 4px;">${teacher.name}</div>
+                                    <div style="font-size: 13px; color: var(--gray);">${teacher.email}</div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-light);">
+                                <div style="font-size: 13px; color: var(--gray); margin-bottom: 6px;"><strong>Subject:</strong> ${teacher.subject || 'N/A'}</div>
+                                <div style="font-size: 13px; color: var(--gray); margin-bottom: 6px;"><strong>Portal ID:</strong> ${teacher.portalId || 'N/A'}</div>
+                                <div style="font-size: 13px; color: var(--gray);"><strong>Classes:</strong> ${classesText}</div>
+                            </div>
+                            <div style="margin-top: 12px; display: flex; gap: 8px;">
+                                <button class="btn-icon btn-edit" onclick="showAssignClassesModal('${teacher.id}')" style="flex: 1; padding: 8px; font-size: 12px;" title="Assign Classes">📚 Assign Classes</button>
+                                <button class="btn-icon btn-edit" onclick="editTeacherCredentials('${teacher.id}')" style="flex: 1; padding: 8px; font-size: 12px;" title="Edit Credentials">🔑 Edit</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading teachers:', error);
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--danger);">Error loading teachers.</div>';
+            }
+        }
+
+        function loadTeachersList() {
+            const tbody = document.getElementById('teachersTableBody');
+            const countEl = document.getElementById('teacherCount');
+            
+            if (!tbody) return;
+
+            if (typeof schoolData === 'undefined') {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--danger);">Error: Data storage not loaded.</td></tr>';
+                return;
+            }
+
+            try {
+                const teachers = schoolData.getAllTeachers() || [];
+                
+                if (countEl) countEl.textContent = teachers.length;
+
+                if (teachers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">No teachers found. Add your first teacher!</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                teachers.forEach(teacher => {
+                    const classes = teacher.classes || [];
+                    const classesHtml = classes.length > 0 
+                        ? classes.map(c => `<span style="background: var(--primary); color: white; padding: 4px 10px; border-radius: 8px; font-size: 11px; margin-right: 6px; display: inline-block;">${c.class}${c.section}</span>`).join('')
+                        : '<span style="color: var(--gray); font-style: italic;">None</span>';
+                    
+                    html += `
+                        <tr>
+                            <td style="font-weight: 600; color: var(--dark);">${teacher.name}</td>
+                            <td style="font-size: 14px; color: var(--gray);">${teacher.email}</td>
+                            <td style="font-size: 14px; color: var(--dark);">${teacher.subject || 'N/A'}</td>
+                            <td style="font-size: 14px; color: var(--primary); font-weight: 600;">${teacher.portalId || 'N/A'}</td>
+                            <td>${classesHtml}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-icon btn-edit" onclick="showAssignClassesModal('${teacher.id}')" title="Assign Classes">📚</button>
+                                    <button class="btn-icon btn-edit" onclick="editTeacherCredentials('${teacher.id}')" title="Edit Credentials">🔑</button>
+                                    <button class="btn-icon btn-danger" onclick="deleteTeacher('${teacher.id}')" title="Delete">🗑️</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                tbody.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading teachers:', error);
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--danger);">Error loading teachers.</td></tr>';
+            }
+        }
+
+        function showAddTeacherModal() {
+            const modal = document.getElementById('addTeacherModal');
+            if (!modal) return;
+            
+            modal.style.display = 'flex';
+            
+            // Clear all fields
+            document.getElementById('newTeacherName').value = '';
+            document.getElementById('newTeacherEmail').value = '';
+            document.getElementById('newTeacherSubject').value = '';
+            document.getElementById('newTeacherPortalId').value = '';
+            document.getElementById('newTeacherPassword').value = '';
+            document.getElementById('newTeacherClass1').value = '';
+            document.getElementById('newTeacherSection1').value = '';
+            
+            // Remove extra class assignment rows
+            const classAssignments = document.getElementById('classAssignments');
+            while (classAssignments.children.length > 1) {
+                classAssignments.removeChild(classAssignments.lastChild);
+            }
+        }
+
+        function closeAddTeacherModal() {
+            const modal = document.getElementById('addTeacherModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function addClassAssignmentRow() {
+            const container = document.getElementById('classAssignments');
+            const rowCount = container.children.length + 1;
+            
+            const newRow = document.createElement('div');
+            newRow.className = 'form-row';
+            newRow.style.marginBottom = '10px';
+            newRow.innerHTML = `
+                <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                    <select id="newTeacherClass${rowCount}" class="form-select">
+                        <option value="">Select Class</option>
+                        <option value="1">Class 1</option>
+                        <option value="2">Class 2</option>
+                        <option value="3">Class 3</option>
+                        <option value="4">Class 4</option>
+                        <option value="5">Class 5</option>
+                        <option value="6">Class 6</option>
+                        <option value="7">Class 7</option>
+                        <option value="8">Class 8</option>
+                        <option value="9">Class 9</option>
+                        <option value="10">Class 10</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                    <select id="newTeacherSection${rowCount}" class="form-select">
+                        <option value="">Select Section</option>
+                        <option value="A">Section A</option>
+                        <option value="B">Section B</option>
+                        <option value="C">Section C</option>
+                        <option value="D">Section D</option>
+                        <option value="E">Section E</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()" style="white-space: nowrap;">Remove</button>
+            `;
+            container.appendChild(newRow);
+        }
+
+        function addTeacher() {
+            if (typeof schoolData === 'undefined') {
+                alert('Error: Data storage not loaded. Please refresh the page.');
+                return;
+            }
+
+            const name = document.getElementById('newTeacherName').value.trim();
+            const email = document.getElementById('newTeacherEmail').value.trim();
+            const subject = document.getElementById('newTeacherSubject').value;
+            const portalId = document.getElementById('newTeacherPortalId').value.trim();
+            const password = document.getElementById('newTeacherPassword').value.trim();
+
+            if (!name) {
+                alert('Please enter teacher name');
+                return;
+            }
+
+            if (!email) {
+                alert('Please enter email address');
+                return;
+            }
+
+            if (!subject) {
+                alert('Please select subject');
+                return;
+            }
+
+            // Collect class assignments
+            const classes = [];
+            const classAssignments = document.getElementById('classAssignments');
+            for (let i = 1; i <= classAssignments.children.length; i++) {
+                const classSelect = document.getElementById(`newTeacherClass${i}`);
+                const sectionSelect = document.getElementById(`newTeacherSection${i}`);
+                if (classSelect && sectionSelect && classSelect.value && sectionSelect.value) {
+                    classes.push({
+                        class: classSelect.value,
+                        section: sectionSelect.value
+                    });
+                }
+            }
+
+            try {
+                const teacherData = {
+                    name: name,
+                    email: email,
+                    subject: subject,
+                    classes: classes,
+                    portalId: portalId || undefined,
+                    password: password || undefined
+                };
+
+                const newTeacher = schoolData.addTeacher(teacherData);
+                
+                if (!newTeacher) {
+                    alert('Error: Could not add teacher. Email or Portal ID may already exist.');
+                    return;
+                }
+
+                alert('Teacher added successfully!');
+                closeAddTeacherModal();
+                
+                // Update displays
+                loadTeachersDetailsList();
+                loadTeachersList();
+                updateStats();
+                
+                // If in teachers section, refresh it
+                const teachersSection = document.getElementById('teachersSection');
+                if (teachersSection && teachersSection.style.display !== 'none') {
+                    setTimeout(() => {
+                        loadTeachersList();
+                    }, 200);
+                }
+            } catch (error) {
+                console.error('Error adding teacher:', error);
+                alert('Error adding teacher: ' + error.message);
+            }
+        }
+
+        function showAssignClassesModal(teacherId) {
+            const modal = document.getElementById('assignClassesModal');
+            if (!modal) return;
+
+            const data = schoolData.getData();
+            const teacher = data.teachers.find(t => t.id === teacherId);
+            
+            if (!teacher) {
+                alert('Teacher not found!');
+                return;
+            }
+
+            document.getElementById('assignTeacherId').value = teacherId;
+            document.getElementById('assignTeacherName').value = teacher.name;
+
+            // Display current classes
+            const currentClassesList = document.getElementById('currentClassesList');
+            const classes = teacher.classes || [];
+            
+            if (classes.length === 0) {
+                currentClassesList.innerHTML = '<div style="color: var(--gray); font-style: italic;">No classes assigned</div>';
+            } else {
+                let html = '<div style="display: flex; flex-wrap: wrap; gap: 8px;">';
+                classes.forEach((cls, idx) => {
+                    html += `
+                        <div style="background: var(--primary); color: white; padding: 8px 12px; border-radius: 8px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                            <span>${cls.class}${cls.section}</span>
+                            <button onclick="removeClassFromTeacher('${teacherId}', '${cls.class}', '${cls.section}')" style="background: rgba(255,255,255,0.3); border: none; color: white; border-radius: 4px; width: 20px; height: 20px; cursor: pointer; font-size: 12px; line-height: 1;">×</button>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                currentClassesList.innerHTML = html;
+            }
+
+            // Clear assignment fields
+            document.getElementById('assignClass').value = '';
+            document.getElementById('assignSection').value = '';
+
+            modal.style.display = 'flex';
+        }
+
+        function closeAssignClassesModal() {
+            const modal = document.getElementById('assignClassesModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function addClassToTeacher() {
+            const teacherId = document.getElementById('assignTeacherId').value;
+            const classNum = document.getElementById('assignClass').value;
+            const section = document.getElementById('assignSection').value;
+
+            if (!teacherId || !classNum || !section) {
+                alert('Please select both class and section');
+                return;
+            }
+
+            try {
+                schoolData.assignTeacherToClass(teacherId, { class: classNum, section: section });
+                
+                // Refresh the modal
+                showAssignClassesModal(teacherId);
+                
+                // Update displays
+                loadTeachersDetailsList();
+                loadTeachersList();
+            } catch (error) {
+                console.error('Error assigning class:', error);
+                alert('Error assigning class: ' + error.message);
+            }
+        }
+
+        function removeClassFromTeacher(teacherId, classNum, section) {
+            if (!confirm(`Remove teacher from Class ${classNum}${section}?`)) {
+                return;
+            }
+
+            try {
+                schoolData.removeTeacherFromClass(teacherId, { class: classNum, section: section });
+                
+                // Refresh the modal
+                showAssignClassesModal(teacherId);
+                
+                // Update displays
+                loadTeachersDetailsList();
+                loadTeachersList();
+            } catch (error) {
+                console.error('Error removing class:', error);
+                alert('Error removing class: ' + error.message);
+            }
+        }
+
+        function deleteTeacher(teacherId) {
+            if (!confirm('Are you sure you want to delete this teacher? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const data = schoolData.getData();
+                data.teachers = data.teachers.filter(t => t.id !== teacherId);
+                schoolData.saveData(data);
+                
+                alert('Teacher deleted successfully!');
+                loadTeachersList();
+                loadTeachersDetailsList();
+                updateStats();
+            } catch (error) {
+                console.error('Error deleting teacher:', error);
+                alert('Error deleting teacher: ' + error.message);
+            }
+        }
+
+        // ============================
+        // REPORTS SECTION (Dashboard)
+        // Uses the e.html-style template and html2pdf
+        // ============================
+
+        function loadReportsStudentList() {
+            if (typeof schoolData === 'undefined') {
+                console.error('data-storage.js not loaded!');
+                return;
+            }
+
+            const tbody = document.getElementById('reportsTableBody');
+            if (!tbody) return;
+
+            const cls = (document.getElementById('reportFilterClass') || {}).value || '';
+            const sec = (document.getElementById('reportFilterSection') || {}).value || '';
+
+            let students = [];
+            try {
+                // Prefer helper if present
+                if (typeof schoolData.getStudentsByClassSection === 'function') {
+                    students = schoolData.getStudentsByClassSection(cls, sec) || [];
+                } else if (typeof schoolData.getAllStudents === 'function') {
+                    students = schoolData.getAllStudents() || [];
+                    if (cls) students = students.filter(s => String(s.class || '') === String(cls));
+                    if (sec) students = students.filter(s => String(s.section || '') === String(sec));
+                } else {
+                    const data = schoolData.getData() || {};
+                    students = Array.isArray(data.students) ? data.students : [];
+                }
+            } catch (e) {
+                console.error('Error loading students for reports:', e);
+                students = [];
+            }
+
+            if (!students || students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--gray);">No students found.</td></tr>';
+                return;
+            }
+
+            let html = '';
+            students.forEach(s => {
+                html += `<tr>
+                    <td class="student-id">${s.studentId || s.id}</td>
+                    <td><strong>${s.name || ''}</strong></td>
+                    <td>Class ${s.class || ''}</td>
+                    <td>Section ${s.section || ''}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon btn-edit" onclick="printStudentReportFromDashboard('${s.id}')" title="Generate PDF">📄</button>
+                        </div>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function buildStudentReportHTML_Dashboard(student) {
+            const data = schoolData.getData() || {};
+            const teachers = Array.isArray(data.teachers) ? data.teachers : [];
+            const assessments = data.assessments || {};
+
+            // Group assessments by subject
+            const assessmentsBySubject = {};
+            Object.keys(assessments).forEach(k => {
+                const parts = k.split('_');
+                if (parts.length !== 2) return;
+                const teacherId = parts[0];
+                const studentId = parts[1];
+                if (studentId !== student.id) return;
+
+                const teacher = teachers.find(t => t.id === teacherId) || { name: teacherId, subject: 'General' };
+                const subject = (teacher.subject || (teacher.subjects && teacher.subjects[0]) || 'General');
+                if (!assessmentsBySubject[subject]) assessmentsBySubject[subject] = [];
+                assessmentsBySubject[subject].push({ teacher: teacher.name, data: assessments[k] });
+            });
+
+            const bgUrl = 'BG TEST/background.jpg';
+            const logoUrl = 'BG TEST/logo 1.png';
+
+            const coverHtml = `
+<style>
+@page { size: A4; margin: 0; }
+.cover-page { width: 210mm; height: 297mm; margin: 0; padding: 0; position: relative; box-sizing: border-box; background-image: url("${bgUrl}"); background-size: cover; background-position: center; background-repeat: no-repeat; padding: 22mm 18mm; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: "Times New Roman", serif; page-break-after: always; }
+.cover-logo { position: absolute; top: 20mm; right: 18mm; }
+.cover-logo img { height: 60px; }
+.cover-student-name { font-size: 32px; font-weight: bold; color: #002f6c; margin-bottom: 20px; text-align: center; }
+.cover-student-info { font-size: 18px; color: #002f6c; text-align: center; margin-bottom: 10px; }
+.cover-student-details { font-size: 16px; color: #666; text-align: center; margin-top: 30px; }
+.cover-report-title { font-size: 24px; font-weight: bold; color: #002f6c; margin-top: 40px; text-align: center; }
+</style>
+<div class="cover-page">
+  <div class="cover-logo"><img src="${logoUrl}" alt="Academus Logo"></div>
+  <div class="cover-student-name">${student.name || ''}</div>
+  <div class="cover-student-info">Student ID: ${student.studentId || student.id}</div>
+  <div class="cover-student-info">Class ${student.class || ''}${student.section ? ' - Section ' + student.section : ''}</div>
+  <div class="cover-student-details">
+    ${student.parentsName ? 'Parent: ' + student.parentsName + '<br>' : ''}
+    ${student.phone ? 'Phone: ' + student.phone + '<br>' : ''}
+    ${student.address ? 'Address: ' + student.address : ''}
+  </div>
+  <div class="cover-report-title">ACADEMIC REPORT CARD</div>
+</div>`;
+
+            function buildSubjectPage(subject, assessmentItem) {
+                const assessment = (assessmentItem && assessmentItem.data) ? assessmentItem.data : {};
+                const qualitative = assessment.qualitative || {};
+                const quantitative = assessment.quantitative || {};
+                const remarks = assessment.teacherRemarks || assessment.remarks || assessment.teacher_comments || '';
+
+                // If no qualitative data, fall back to e.html default rows (English)
+                const defaultRows = `
+<tr class="report-section-row"><td colspan="5">Reading and Comprehension</td></tr>
+<tr><td>Can identify the main idea and supporting details in a text</td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td></tr>
+<tr><td>Can locate and use relevant information from a text to answer questions</td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td></tr>
+<tr class="report-section-row"><td colspan="5">Grammar and Punctuation</td></tr>
+<tr><td>Can use knowledge of punctuation and grammar to read familiar texts with understanding</td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td></tr>
+<tr><td>Can use simple present and past tense accurately in writing and speech</td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td></tr>
+<tr><td>Can use prepositions of time and place correctly and form clear noun phrases to add detail in writing</td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td></tr>
+<tr class="report-section-row"><td colspan="5">Writing Skills</td></tr>
+<tr><td>Can produce imaginative writing with clear ideas, descriptive details and a logical sequence of events</td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td></tr>
+<tr><td>Can complete structured writing tasks by following the given format, instructions and purpose accurately</td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td></tr>
+<tr class="report-section-row"><td colspan="5">Speaking Skills</td></tr>
+<tr><td>Can speak clearly and confidently in full sentences during class discussions</td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td></tr>
+<tr><td>Can share ideas and opinions using appropriate vocabulary</td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td></tr>
+<tr class="report-section-row"><td colspan="5">Listening Skills</td></tr>
+<tr><td>Can listen attentively to instructions, stories and discussions</td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td></tr>
+<tr><td>Can respond appropriately to questions based on what is heard</td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td><td class="report-col-small"></td></tr>
+`;
+
+                let tableRows = '';
+                const skills = Object.keys(qualitative);
+                if (skills.length === 0) {
+                    tableRows = defaultRows;
+                } else {
+                    // Simple: one section
+                    tableRows += `<tr class="report-section-row"><td colspan="5">Areas of Development</td></tr>`;
+                    skills.forEach(skill => {
+                        const value = qualitative[skill] || '';
+                        const ele = value === 'ELE' || value === 'Exceeding' ? '✓' : '';
+                        const mle = value === 'MLE' || value === 'Meeting' ? '✓' : '';
+                        const p = value === 'P' || value === 'Progressing' ? '✓' : '';
+                        const ni = value === 'NI' || value === 'Needs Improvement' ? '✓' : '';
+                        tableRows += `<tr>
+                            <td>${skill}</td>
+                            <td class="report-col-small">${ele}</td>
+                            <td class="report-col-small">${mle}</td>
+                            <td class="report-col-small">${p}</td>
+                            <td class="report-col-small">${ni}</td>
+                        </tr>`;
+                    });
+                }
+
+                const q1 = quantitative['1st Assessment'] || '';
+                const q2 = quantitative['2nd Assessment'] || '';
+                const qMid = quantitative['Mid of Year'] || '';
+                const qTot = quantitative['Total'] || '';
+                const qPct = quantitative['Percentage'] || '';
+
+                return `
+<style>
+@page { size: A4; margin: 0; }
+.report-page { width: 210mm; height: 297mm; margin: 0; padding: 0; position: relative; box-sizing: border-box; background-image: url("${bgUrl}"); background-size: cover; background-position: center; background-repeat: no-repeat; padding: 22mm 18mm; font-family: "Times New Roman", serif; page-break-after: always; }
+.report-logo { position: absolute; top: 20mm; right: 18mm; }
+.report-logo img { height: 60px; }
+.report-main-title { text-align: center; font-size: 17px; font-weight: bold; color: #002f6c; margin-top: 55px; margin-bottom: 6px; }
+.report-description { font-size: 12.5px; line-height: 1.35; margin-bottom: 10px; }
+.report-table { width: 100%; border-collapse: collapse; font-size: 12.5px; background: white; }
+.report-table th, .report-table td { border: 1px solid #002f6c; padding: 5px 6px; vertical-align: middle; }
+.report-table th { background: #002f6c; color: white; font-size: 13px; text-align: center; }
+.report-col-small { width: 38px; text-align: center; }
+.report-section-row td { background: #e8f1fb; font-weight: bold; color: #002f6c; font-size: 13px; }
+.report-quant-header { background: #002f6c; color: white; padding: 6px; font-weight: bold; font-size: 13px; margin-top: 12px; }
+.report-remarks-box { height: 85px; }
+</style>
+<div class="report-page">
+  <div class="report-logo"><img src="${logoUrl}" alt="Academus Logo"></div>
+  <div class="report-main-title">${String(subject || '').toUpperCase()}</div>
+  <div class="report-description">Student: <strong>${student.name || ''}</strong> · ID: ${student.studentId || student.id} · Class ${student.class || ''}${student.section ? ' - ' + student.section : ''}</div>
+  <table class="report-table">
+    <tr>
+      <th>AREAS OF DEVELOPMENT</th>
+      <th class="report-col-small">ELE</th>
+      <th class="report-col-small">MLE</th>
+      <th class="report-col-small">P</th>
+      <th class="report-col-small">NI</th>
+    </tr>
+    ${tableRows}
+  </table>
+  <div class="report-quant-header">Quantitative</div>
+  <table class="report-table">
+    <tr>
+      <td>${q1 || '1st Assessment'}<br>/25</td>
+      <td>${q2 || '2nd Assessment'}<br>/25</td>
+      <td>${qMid || 'Mid of Year'}<br>/100</td>
+      <td>${qTot || 'Total'}<br>/150</td>
+      <td>${qPct || 'Percentage'}<br>%</td>
+    </tr>
+  </table>
+  <table class="report-table" style="margin-top:8px;">
+    <tr><th>TEACHER REMARKS & NOTES</th></tr>
+    <tr><td class="report-remarks-box">${String(remarks || '').replace(/\n/g,'<br>')}</td></tr>
+  </table>
+</div>`;
+            }
+
+            const subjects = Object.keys(assessmentsBySubject);
+            const subjectPages = [];
+            if (subjects.length === 0) {
+                subjectPages.push(buildSubjectPage('Communication, Language and Literacy', null));
+            } else {
+                subjects.forEach(sub => subjectPages.push(buildSubjectPage(sub, assessmentsBySubject[sub][0])));
+            }
+
+            return { coverHtml, subjectPages };
+        }
+
+        function printStudentReportFromDashboard(studentId) {
+            if (typeof html2pdf === 'undefined') {
+                alert('PDF library not loaded. Please refresh the page.');
+                return;
+            }
+            const students = (schoolData && typeof schoolData.getAllStudents === 'function') ? (schoolData.getAllStudents() || []) : ((schoolData.getData() || {}).students || []);
+            const student = students.find(s => s.id === studentId);
+            if (!student) { alert('Student not found'); return; }
+
+            const built = buildStudentReportHTML_Dashboard(student);
+            const container = document.createElement('div');
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.width = '210mm';
+            document.body.appendChild(container);
+
+            const coverDiv = document.createElement('div');
+            coverDiv.innerHTML = built.coverHtml;
+            container.appendChild(coverDiv);
+
+            built.subjectPages.forEach(p => {
+                const d = document.createElement('div');
+                d.innerHTML = p;
+                container.appendChild(d);
+            });
+
+            setTimeout(() => {
+                html2pdf().set({
+                    margin: 0,
+                    filename: `${student.studentId || student.id}_report.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: null, allowTaint: true, logging: false },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['css', 'legacy'] }
+                }).from(container).save().then(() => container.remove()).catch(err => {
+                    console.error(err);
+                    alert('Error generating PDF. Check console.');
+                    container.remove();
+                });
+            }, 300);
+        }
+
+        function printAllStudentReportsFromDashboard() {
+            if (typeof html2pdf === 'undefined') {
+                alert('PDF library not loaded. Please refresh the page.');
+                return;
+            }
+
+            const cls = (document.getElementById('reportFilterClass') || {}).value || '';
+            const sec = (document.getElementById('reportFilterSection') || {}).value || '';
+
+            let students = [];
+            if (typeof schoolData.getStudentsByClassSection === 'function') {
+                students = schoolData.getStudentsByClassSection(cls, sec) || [];
+            } else if (typeof schoolData.getAllStudents === 'function') {
+                students = schoolData.getAllStudents() || [];
+                if (cls) students = students.filter(s => String(s.class || '') === String(cls));
+                if (sec) students = students.filter(s => String(s.section || '') === String(sec));
+            } else {
+                students = ((schoolData.getData() || {}).students) || [];
+            }
+
+            if (!students || students.length === 0) {
+                alert('No students to print');
+                return;
+            }
+
+            const container = document.createElement('div');
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.width = '210mm';
+            document.body.appendChild(container);
+
+            students.forEach(student => {
+                const built = buildStudentReportHTML_Dashboard(student);
+                const coverDiv = document.createElement('div');
+                coverDiv.innerHTML = built.coverHtml;
+                container.appendChild(coverDiv);
+                built.subjectPages.forEach(p => {
+                    const d = document.createElement('div');
+                    d.innerHTML = p;
+                    container.appendChild(d);
+                });
+            });
+
+            setTimeout(() => {
+                html2pdf().set({
+                    margin: 0,
+                    filename: `all_students_reports.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: null, allowTaint: true, logging: false },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['css', 'legacy'] }
+                }).from(container).save().then(() => container.remove()).catch(err => {
+                    console.error(err);
+                    alert('Error generating PDF. Check console.');
+                    container.remove();
+                });
+            }, 600);
+        }
+    </script>
+</body>
+</html>

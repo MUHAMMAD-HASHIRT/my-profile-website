@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Management - Academus International School</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="data-storage.js"></script>
+    <!-- html2pdf (uses html2canvas & jsPDF internally) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- PDF.js to convert provided PDF template pages to images for accurate backgrounds -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.10.122/pdf.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .nav-brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Main Container */
+        .main-container {
+            margin-top: 70px;
+            padding: 30px;
+            max-width: 1600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 14px 28px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-tab:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .progress-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .progress-bar-container {
+            background: rgba(255, 255, 255, 0.2);
+            height: 50px;
+            border-radius: 25px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            height: 100%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+        }
+
+        .progress-text {
+            margin-top: 16px;
+            font-size: 18px;
+            font-weight: 500;
+            opacity: 0.95;
+        }
+
+        .teacher-progress-item {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .teacher-progress-name {
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .teacher-progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            height: 24px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .teacher-progress-fill {
+            background: linear-gradient(90deg, #10b981, #059669);
+            height: 100%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        .form-select, .form-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: inherit;
+            background: white;
+        }
+
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Tables */
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 24px;
+        }
+
+        .table th {
+            background: var(--bg);
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray);
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .table tbody tr {
+            transition: all 0.3s;
+        }
+
+        .table tbody tr:hover {
+            background: var(--bg);
+        }
+
+        /* Lock Controls */
+        .lock-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border-radius: 16px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .lock-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lock-status-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .status-badge.locked {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .status-badge.unlocked {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        /* Content Items */
+        .content-item {
+            background: var(--bg);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .content-item:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow);
+        }
+
+        .content-item-title {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .content-item-skills {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .content-item-skills li {
+            padding: 8px 0;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .content-item-skills li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        /* Add Content Form */
+        .add-content-form {
+            background: var(--bg);
+            padding: 32px;
+            border-radius: 20px;
+            margin-top: 30px;
+            border: 2px dashed var(--gray-light);
+        }
+
+        .skill-input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .skill-input-group input {
+            flex: 1;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .tip-box strong {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .main-container {
+                padding: 20px;
+            }
+
+            .content-card {
+                padding: 24px;
+            }
+        }
+
+        /* Printable report template (A4) */
+        #reportTemplate {
+            width: 210mm;
+            min-height: 297mm;
+            box-sizing: border-box;
+            background-size: cover;
+            background-repeat: no-repeat;
+            padding: 20mm;
+            color: #111827;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        }
+
+        /* Teacher Cards */
+        .teachers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .teacher-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .teacher-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .teacher-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-light);
+        }
+
+        .teacher-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .teacher-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            box-shadow: var(--shadow);
+        }
+
+        .teacher-info h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0 0 4px 0;
+        }
+
+        .teacher-email {
+            color: var(--gray);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .teacher-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            background: var(--bg);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .detail-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .subjects-list, .classes-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .subject-badge, .class-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .subject-badge {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+        }
+
+        .class-badge {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .no-data {
+            color: var(--gray);
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        .teacher-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn.assign {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .action-btn.assign:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .action-btn.delete {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        .action-btn.delete:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .teachers-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .teachers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .teacher-details {
+                grid-template-columns: 1fr;
+            }
+
+            .teacher-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <a href="admin-dashboard.html" class="nav-brand">
+            <div class="nav-brand-icon">🎓</div>
+            <span>ACADEMUS</span>
+        </a>
+        <div class="nav-actions">
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="page-header">
+            <h1 class="page-title">Admin Management Portal</h1>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-section="progress" onclick="showSection('progress')">
+                <span>📈</span>
+                <span>Progress Status</span>
+            </div>
+            <div class="nav-tab" data-section="teachers" onclick="showSection('teachers')">
+                <span>👩‍🏫</span>
+                <span>Teacher Management</span>
+            </div>
+            <div class="nav-tab" data-section="students" onclick="showSection('students')">
+                <span>👥</span>
+                <span>Students</span>
+            </div>
+            <div class="nav-tab" data-section="assign" onclick="showSection('assign')">
+                <span>👥</span>
+                <span>Assign Teachers</span>
+            </div>
+            <div class="nav-tab" data-section="content" onclick="showSection('content')">
+                <span>📚</span>
+                <span>Course Content</span>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div id="progressSection" class="content-card">
+            <h2 class="card-title">
+                <div class="card-icon">📈</div>
+                Progress Status
+            </h2>
+            <div class="progress-section">
+                <div class="progress-title">Overall Progress</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="overallProgress" style="width: 0%">0%</div>
+                </div>
+                <div class="progress-text" id="progressText">0 of 0 assessments submitted</div>
+            </div>
+            <div id="teacherProgressList"></div>
+            <div style="margin-top: 40px; text-align: center;">
+                <button class="btn btn-success" id="printBtn" onclick="generatePDF()" disabled style="padding: 16px 32px; font-size: 16px;">
+                    📄 Generate & Print Report Cards
+                </button>
+            </div>
+        </div>
+
+        <!-- Students Management Section -->
+        <div id="studentsSection" class="content-card" style="display: none;">
+            <h2 class="card-title">
+                <div class="card-icon">👥</div>
+                Students Management
+            </h2>
+            <div style="margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+                <div style="font-size:14px; color:var(--gray);">Manage and print individual student reports.</div>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-primary" onclick="loadStudentsManagementList()">Refresh List</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('reportTemplateFile').click()">📁 Upload Template</button>
+                    <input type="file" id="reportTemplateFile" accept="image/*,application/pdf" style="display:none" onchange="handleTemplateUpload(event)">
+                    <button class="btn btn-success" id="printAllBtn" onclick="printAllStudentReports()" disabled>📄 Print All Reports</button>
+                </div>
+            </div>
+
+            <div class="table-container" style="margin-top: 24px; overflow:auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Class</th>
+                            <th>Section</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsManagementTableBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px; color: var(--gray);">Loading students...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Teacher Management Section -->
+        <div id="teachersSection" class="content-card" style="display: none;">
+            <h2 class="card-title">
+                <div class="card-icon">👩‍🏫</div>
+                Teacher Management
+            </h2>
+            <div style="margin-bottom: 24px;">
+                <button class="btn btn-primary" onclick="showAddTeacherModal()" style="padding: 14px 28px; font-size: 16px;">
+                    ➕ Add New Teacher
+                </button>
+            </div>
+            <div class="table-container" style="margin-top: 24px;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Subject</th>
+                            <th>Portal ID</th>
+                            <th>Assigned Classes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teachersManagementTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">Loading teachers...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Assign Section -->
+        <div id="assignSection" class="content-card" style="display: none;">
+            <h2 class="card-title">
+                <div class="card-icon">👥</div>
+                Assign Teachers to Classes
+            </h2>
+            <div class="form-group">
+                <label class="form-label">Select Teacher</label>
+                <select class="form-select" id="teacherSelect" onchange="loadTeacherClasses()">
+                    <option value="">-- Select Teacher --</option>
+                </select>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+                <div class="form-group">
+                    <label class="form-label">Select Class</label>
+                    <select class="form-select" id="classSelect">
+                        <option value="">-- Select Class --</option>
+                        <option value="1">Class 1</option>
+                        <option value="2">Class 2</option>
+                        <option value="3">Class 3</option>
+                        <option value="4">Class 4</option>
+                        <option value="5">Class 5</option>
+                        <option value="6">Class 6</option>
+                        <option value="7">Class 7</option>
+                        <option value="8">Class 8</option>
+                        <option value="9">Class 9</option>
+                        <option value="10">Class 10</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Select Section</label>
+                    <select class="form-select" id="sectionSelect">
+                        <option value="">-- Select Section --</option>
+                        <option value="A">Section A</option>
+                        <option value="B">Section B</option>
+                        <option value="C">Section C</option>
+                        <option value="D">Section D</option>
+                        <option value="E">Section E</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="assignTeacher()" style="width: 100%; padding: 16px;">
+                ✨ Assign Teacher
+            </button>
+            <div class="tip-box">
+                <strong>💡 Tip</strong>
+                You can assign the same teacher to multiple classes and sections. Just select different combinations and click "Assign Teacher" for each.
+            </div>
+            <div id="assignedClasses" style="margin-top: 40px;"></div>
+        </div>
+
+        <!-- Content Section -->
+        <div id="contentSection" class="content-card" style="display: none;">
+            <h2 class="card-title">
+                <div class="card-icon">📚</div>
+                Course Content Management
+            </h2>
+            <div class="lock-controls">
+                <div class="lock-status">
+                    <div class="lock-status-text">Portal Status:</div>
+                    <span class="status-badge" id="lockStatus">Checking...</span>
+                </div>
+                <button class="btn" id="lockBtn" onclick="toggleLock()">Lock Portal</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Select Subject</label>
+                <select class="form-select" id="subjectSelect" onchange="loadCourseContent()">
+                    <option value="">-- Select Subject --</option>
+                    <option value="mathematics">Mathematics</option>
+                    <option value="english">English</option>
+                </select>
+            </div>
+            <div id="courseContentList"></div>
+            <div class="add-content-form">
+                <h3 style="margin-bottom: 20px; color: var(--dark); font-size: 20px; font-weight: 700;">Add New Content</h3>
+                <div class="form-group">
+                    <label class="form-label">Content Title</label>
+                    <input type="text" class="form-input" id="contentTitle" placeholder="e.g., Numbers to 1000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Skills</label>
+                    <div id="skillsContainer">
+                        <div class="skill-input-group">
+                            <input type="text" class="form-input skill-input" placeholder="Enter skill">
+                            <button class="btn btn-danger" onclick="removeSkillInput(this)" style="padding: 14px 20px;">×</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addSkillInput()" style="margin-top: 12px;">
+                        ➕ Add Skill
+                    </button>
+                </div>
+                <button class="btn btn-primary" onclick="addCourseContent()" style="width: 100%; padding: 16px;">
+                    ✨ Add Content
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function init() {
+            if (!sessionStorage.getItem('adminLoggedIn')) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+            loadTeachers();
+            loadProgress();
+            checkLockStatus();
+            // Attempt to load a workspace PDF template (if present), then apply any saved template
+            tryLoadWorkspaceTemplate().then(() => {
+                applySavedTemplate();
+                showSection('progress');
+            }).catch(() => {
+                applySavedTemplate();
+                showSection('progress');
+            });
+        }
+
+        function showSection(section) {
+            // Activate tab by data-section attribute (safe when called programmatically)
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            const activeTab = document.querySelector(`.nav-tab[data-section="${section}"]`);
+            if (activeTab) activeTab.classList.add('active');
+
+            // Show/hide sections
+            document.getElementById('progressSection').style.display = section === 'progress' ? 'block' : 'none';
+            document.getElementById('teachersSection').style.display = section === 'teachers' ? 'block' : 'none';
+            document.getElementById('studentsSection').style.display = section === 'students' ? 'block' : 'none';
+            document.getElementById('assignSection').style.display = section === 'assign' ? 'block' : 'none';
+            document.getElementById('contentSection').style.display = section === 'content' ? 'block' : 'none';
+
+            // Load data when section is shown
+            if (section === 'teachers') {
+                loadTeachersManagementList();
+            } else if (section === 'students') {
+                loadStudentsManagementList();
+            }
+        }
+
+        function loadTeachers() {
+            const teachers = schoolData.getAllTeachers();
+            const select = document.getElementById('teacherSelect');
+            select.innerHTML = '<option value="">-- Select Teacher --</option>';
+            teachers.forEach(teacher => {
+                const option = document.createElement('option');
+                option.value = teacher.id;
+                option.textContent = `${teacher.name} - ${teacher.subject}`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadTeacherClasses() {
+            const teacherId = document.getElementById('teacherSelect').value;
+            if (!teacherId) {
+                document.getElementById('assignedClasses').innerHTML = '';
+                return;
+            }
+            const teacher = schoolData.getAllTeachers().find(t => t.id === teacherId);
+            if (!teacher || !teacher.classes) {
+                document.getElementById('assignedClasses').innerHTML = '<p style="color: var(--gray); padding: 20px; text-align: center;">No classes assigned yet.</p>';
+                return;
+            }
+            let html = '<h3 style="margin-bottom: 20px; color: var(--dark); font-size: 20px; font-weight: 700;">Assigned Classes & Sections</h3>';
+            if (teacher.classes.length === 0) {
+                html += '<p style="color: var(--gray); padding: 20px; background: var(--bg); border-radius: 12px; text-align: center;">No classes assigned yet. Assign classes above.</p>';
+            } else {
+                html += '<table class="table"><thead><tr><th>Class</th><th>Section</th><th>Subject</th><th>Action</th></tr></thead><tbody>';
+                teacher.classes.forEach(cls => {
+                    html += `<tr>
+                        <td><strong style="color: var(--primary);">Class ${cls.class}</strong></td>
+                        <td>Section ${cls.section}</td>
+                        <td><span style="background: rgba(99, 102, 241, 0.1); color: var(--primary); padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">${teacher.subject}</span></td>
+                        <td><button class="btn btn-danger" onclick="removeAssignment('${teacherId}', '${cls.class}', '${cls.section}')" style="padding: 8px 16px;">Remove</button></td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+                html += `<div style="margin-top: 20px; padding: 16px; background: var(--bg); border-radius: 12px; text-align: center; color: var(--gray); font-weight: 600;">
+                    Total Assignments: ${teacher.classes.length} class-section combination(s)
+                </div>`;
+            }
+            document.getElementById('assignedClasses').innerHTML = html;
+        }
+
+        function assignTeacher() {
+            const teacherId = document.getElementById('teacherSelect').value;
+            const classNum = document.getElementById('classSelect').value;
+            const section = document.getElementById('sectionSelect').value;
+            if (!teacherId || !classNum || !section) {
+                alert('Please fill all fields');
+                return;
+            }
+            schoolData.assignTeacherToClass(teacherId, { class: classNum, section: section });
+            alert('✅ Teacher assigned successfully!');
+            loadTeacherClasses();
+        }
+
+        function removeAssignment(teacherId, classNum, section) {
+            if (!confirm('Remove this assignment?')) return;
+            schoolData.removeTeacherFromClass(teacherId, { class: classNum, section: section });
+            loadTeacherClasses();
+        }
+
+        function loadProgress() {
+            const progress = schoolData.getProgressStatus();
+            const overall = progress.overall;
+            document.getElementById('overallProgress').style.width = overall.percentage + '%';
+            document.getElementById('overallProgress').textContent = overall.percentage + '%';
+            document.getElementById('progressText').textContent = `${overall.submitted} of ${overall.total} assessments submitted`;
+            document.getElementById('printBtn').disabled = overall.percentage < 100;
+            
+            let html = '<h3 style="margin-top: 40px; margin-bottom: 24px; color: white; font-size: 20px; font-weight: 700;">Teacher Progress</h3>';
+            Object.keys(progress.teachers).forEach(teacherId => {
+                const t = progress.teachers[teacherId];
+                const teacher = schoolData.getAllTeachers().find(te => te.id === teacherId);
+                if (teacher) {
+                    html += `<div class="teacher-progress-item">
+                        <div class="teacher-progress-name">${teacher.name} (${teacher.subject})</div>
+                        <div class="teacher-progress-bar"><div class="teacher-progress-fill" style="width: ${t.percentage}%"></div></div>
+                        <div style="margin-top: 8px; font-size: 14px; opacity: 0.9;">${t.submitted}/${t.total} (${t.percentage}%)</div>
+                    </div>`;
+                }
+            });
+            document.getElementById('teacherProgressList').innerHTML = html;
+        }
+
+        function checkLockStatus() {
+            const locked = schoolData.isCourseContentLocked();
+            const statusEl = document.getElementById('lockStatus');
+            const btnEl = document.getElementById('lockBtn');
+            
+            if (locked) {
+                statusEl.textContent = '🔒 LOCKED';
+                statusEl.className = 'status-badge locked';
+                btnEl.textContent = '🔓 Unlock Portal';
+                btnEl.className = 'btn btn-success';
+            } else {
+                statusEl.textContent = '🔓 UNLOCKED';
+                statusEl.className = 'status-badge unlocked';
+                btnEl.textContent = '🔒 Lock Portal';
+                btnEl.className = 'btn btn-warning';
+            }
+        }
+
+        function toggleLock() {
+            const locked = schoolData.isCourseContentLocked();
+            schoolData.lockCourseContent(!locked);
+            checkLockStatus();
+            alert(locked ? '✅ Portal unlocked. Teachers can now access.' : '🔒 Portal locked. Teachers cannot access until unlocked.');
+        }
+
+        function loadCourseContent() {
+            const subject = document.getElementById('subjectSelect').value;
+            if (!subject) {
+                document.getElementById('courseContentList').innerHTML = '';
+                return;
+            }
+            const contents = schoolData.getCourseContent(subject);
+            let html = '<h3 style="margin-bottom: 24px; color: var(--dark); font-size: 20px; font-weight: 700;">Current Course Content</h3>';
+            if (contents.length === 0) {
+                html += '<p style="color: var(--gray); padding: 20px; text-align: center; background: var(--bg); border-radius: 12px;">No content added yet.</p>';
+            } else {
+                contents.forEach(content => {
+                    html += `<div class="content-item">
+                        <div class="content-item-title">${content.title}</div>
+                        <ul class="content-item-skills">`;
+                    content.skills.forEach(skill => {
+                        html += `<li>${skill}</li>`;
+                    });
+                    html += `</ul>
+                        <button class="btn btn-danger" onclick="removeCourseContent('${subject}', '${content.id}')" style="margin-top: 16px; padding: 10px 20px;">
+                            🗑️ Remove
+                        </button>
+                    </div>`;
+                });
+            }
+            document.getElementById('courseContentList').innerHTML = html;
+        }
+
+        function removeCourseContent(subject, contentId) {
+            if (!confirm('Remove this course content? Teachers can still see it if already loaded.')) return;
+            schoolData.removeCourseContent(subject, contentId);
+            loadCourseContent();
+        }
+
+        function addSkillInput() {
+            const container = document.getElementById('skillsContainer');
+            const div = document.createElement('div');
+            div.className = 'skill-input-group';
+            div.innerHTML = `<input type="text" class="form-input skill-input" placeholder="Enter skill"><button class="btn btn-danger" onclick="removeSkillInput(this)" style="padding: 14px 20px;">×</button>`;
+            container.appendChild(div);
+        }
+
+        function removeSkillInput(btn) {
+            btn.parentElement.remove();
+        }
+
+        function addCourseContent() {
+            const subject = document.getElementById('subjectSelect').value;
+            const title = document.getElementById('contentTitle').value;
+            const skillInputs = document.querySelectorAll('.skill-input');
+            const skills = Array.from(skillInputs).map(input => input.value).filter(s => s.trim());
+            if (!subject || !title || skills.length === 0) {
+                alert('Please fill all fields');
+                return;
+            }
+            const content = { id: 'cc_' + Date.now(), title: title, skills: skills };
+            schoolData.addCourseContent(subject, content);
+            alert('✅ Content added successfully!');
+            document.getElementById('contentTitle').value = '';
+            document.querySelectorAll('.skill-input').forEach(input => input.value = '');
+            loadCourseContent();
+        }
+
+        function generatePDF() {
+            if (confirm('Generate PDF report cards for all students? This will create a PDF using the selected template.')) {
+                printAllStudentReports();
+            }
+        }
+
+        // Load students into the management table
+        function loadStudentsManagementList() {
+            const tbody = document.getElementById('studentsManagementTableBody');
+            if (!tbody) return;
+            const students = (schoolData && typeof schoolData.getAllStudents === 'function') ? schoolData.getAllStudents() : [];
+            if (!students || students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--gray);">No students found.</td></tr>';
+                document.getElementById('printAllBtn').disabled = true;
+                return;
+            }
+            let html = '';
+            students.forEach(s => {
+                html += `<tr>
+                    <td class="student-id">${s.studentId || s.id}</td>
+                    <td>${s.name}</td>
+                    <td>${s.class || ''}</td>
+                    <td>${s.section || ''}</td>
+                    <td>${s.phone || ''}</td>
+                    <td>${s.address || ''}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-primary" onclick="printStudentReport('${s.id}')" style="padding:8px 12px; font-size:13px;">📄 Print</button>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+            document.getElementById('printAllBtn').disabled = false;
+        }
+
+        // Handle template upload (image or PDF). We store image dataURL in localStorage for use as background.
+        async function handleTemplateUpload(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            // If PDF, render first two pages via pdf.js and save as page images
+            if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+                    const pdf = await loadingTask.promise;
+                    const pages = [];
+                    const pageCount = Math.min(2, pdf.numPages);
+                    for (let p = 1; p <= pageCount; p++) {
+                        const page = await pdf.getPage(p);
+                        const viewport = page.getViewport({ scale: 2 });
+                        const canvas = document.createElement('canvas');
+                        canvas.width = Math.floor(viewport.width);
+                        canvas.height = Math.floor(viewport.height);
+                        const ctx = canvas.getContext('2d');
+                        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                        pages.push(canvas.toDataURL('image/png'));
+                    }
+                    localStorage.setItem('reportTemplatePages', JSON.stringify(pages));
+                    window.reportTemplatePages = pages;
+                    applySavedTemplate();
+                    alert('✅ PDF template uploaded and applied.');
+                } catch (err) {
+                    console.error('Error processing uploaded PDF template:', err);
+                    alert('Error processing PDF template. See console for details.');
+                }
+            } else {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const dataUrl = e.target.result;
+                    try {
+                        localStorage.setItem('reportTemplateDataUrl', dataUrl);
+                    } catch (err) {
+                        console.error('Unable to save template to localStorage:', err);
+                    }
+                    applySavedTemplate();
+                    alert('✅ Template image uploaded and applied for printing.');
+                };
+                reader.readAsDataURL(file);
+            }
+            // clear input so same file can be uploaded again if needed
+            event.target.value = '';
+        }
+
+        function applySavedTemplate() {
+            // Load pages array first (if available)
+            try {
+                const pagesJson = localStorage.getItem('reportTemplatePages');
+                if (pagesJson) {
+                    window.reportTemplatePages = JSON.parse(pagesJson);
+                }
+            } catch (e) {
+                console.error('Error parsing saved template pages:', e);
+            }
+            const dataUrl = localStorage.getItem('reportTemplateDataUrl');
+            const el = document.getElementById('reportTemplate');
+            if (!el) return;
+            if (window.reportTemplatePages && window.reportTemplatePages.length > 0) {
+                el.style.backgroundImage = `url('${window.reportTemplatePages[0]}')`;
+            } else if (dataUrl) {
+                el.style.backgroundImage = `url('${dataUrl}')`;
+            } else {
+                el.style.backgroundImage = '';
+            }
+        }
+
+        // Try to load a workspace-stored PDF template named exactly as saved by the user
+        async function tryLoadWorkspaceTemplate() {
+            const url = 'Jr 3 A Term 1 2025-26.pdf';
+            try {
+                // quick head check
+                const resp = await fetch(url, { method: 'HEAD' });
+                if (!resp.ok) return;
+            } catch (e) {
+                return; // file not accessible
+            }
+
+            try {
+                const loadingTask = pdfjsLib.getDocument(url);
+                const pdf = await loadingTask.promise;
+                const pages = [];
+                const pageCount = Math.min(2, pdf.numPages);
+                for (let p = 1; p <= pageCount; p++) {
+                    const page = await pdf.getPage(p);
+                    const viewport = page.getViewport({ scale: 2 });
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.floor(viewport.width);
+                    canvas.height = Math.floor(viewport.height);
+                    const ctx = canvas.getContext('2d');
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                    pages.push(canvas.toDataURL('image/png'));
+                }
+                localStorage.setItem('reportTemplatePages', JSON.stringify(pages));
+                window.reportTemplatePages = pages;
+                applySavedTemplate();
+                console.log('Loaded workspace PDF template and converted to images');
+            } catch (err) {
+                console.error('Error loading workspace PDF template:', err);
+            }
+        }
+
+        // Build printable HTML for a single student using assessments from all teachers
+        // Uses the format from e.html (professional report card format)
+        function buildStudentReportHTML(student) {
+            const data = schoolData.getData();
+            const teachers = data.teachers || [];
+            
+            // Gather all assessments for this student, grouped by subject/teacher
+            const assessmentsBySubject = {};
+            Object.keys(data.assessments || {}).forEach(k => {
+                const parts = k.split('_');
+                if (parts.length === 2) {
+                    const teacherId = parts[0];
+                    const studentId = parts[1];
+                    if (studentId === student.id) {
+                        const teacher = teachers.find(t => t.id === teacherId) || { name: teacherId, subject: 'General' };
+                        const subject = teacher.subject || 'General';
+                        if (!assessmentsBySubject[subject]) {
+                            assessmentsBySubject[subject] = [];
+                        }
+                        assessmentsBySubject[subject].push({ teacher: teacher.name, data: data.assessments[k] });
+                    }
+                }
+            });
+
+            // Helper to get assessment value (ELE, MLE, P, NI)
+            function getAssessmentValue(assessmentData, skill) {
+                if (!assessmentData || !assessmentData.qualitative) return '';
+                const skillData = assessmentData.qualitative[skill];
+                if (!skillData) return '';
+                if (skillData === 'ELE' || skillData === 'Exceeding') return '✓';
+                if (skillData === 'MLE' || skillData === 'Meeting') return '✓';
+                if (skillData === 'P' || skillData === 'Progressing') return '✓';
+                if (skillData === 'NI' || skillData === 'Needs Improvement') return '✓';
+                return '';
+            }
+
+            // Helper to build subject page HTML
+            function buildSubjectPage(subject, assessments) {
+                const assessment = assessments[0]?.data || {};
+                const qualitative = assessment.qualitative || {};
+                const quantitative = assessment.quantitative || {};
+                const remarks = assessment.teacherRemarks || assessment.remarks || assessment.teacher_comments || '';
+
+                // Subject descriptions
+                const subjectDescriptions = {
+                    'Mathematics': 'Mathematics helps children develop logical thinking, problem-solving skills, and numerical understanding. A strong foundation in mathematics opens doors to countless opportunities in academics and life.',
+                    'English': 'A child\'s way of effectively communicating with the world plays a major role in life. A well-articulate and expressive child can take leaps of success on his/her own. A strong communication background, makes the world an oyster for the child.',
+                    'Science': 'Science encourages curiosity, critical thinking, and understanding of the natural world. Through exploration and experimentation, children develop analytical skills and a deeper appreciation for how things work.',
+                    'Social Studies': 'Social Studies helps children understand their place in society, learn about different cultures, and develop civic responsibility. It builds empathy and global awareness.',
+                    'Art': 'Art fosters creativity, self-expression, and visual thinking. Through artistic exploration, children develop fine motor skills, imagination, and an appreciation for beauty and aesthetics.',
+                    'Physical Education': 'Physical Education promotes health, fitness, and teamwork. It helps children develop coordination, strength, and a positive attitude towards an active lifestyle.',
+                    'Music': 'Music enhances cognitive development, emotional expression, and cultural appreciation. It helps children develop rhythm, listening skills, and creative expression.',
+                    'Computer Science': 'Computer Science introduces children to technology, logical thinking, and problem-solving through digital tools. It prepares them for a technology-driven future.'
+                };
+
+                const description = subjectDescriptions[subject] || 'This subject helps students develop essential skills and knowledge for their academic and personal growth.';
+
+                // Get all skills/areas from the assessment
+                const skills = Object.keys(qualitative);
+                
+                // Group skills by section (if available) or create default sections
+                let sections = {};
+                if (assessment.sections) {
+                    sections = assessment.sections;
+                } else {
+                    // Default sections based on subject
+                    const defaultSections = {
+                        'Mathematics': ['Number Operations', 'Problem Solving', 'Geometry', 'Measurement'],
+                        'English': ['Reading and Comprehension', 'Grammar and Punctuation', 'Writing Skills', 'Speaking Skills', 'Listening Skills'],
+                        'Science': ['Scientific Inquiry', 'Life Sciences', 'Physical Sciences', 'Earth Sciences'],
+                        'Social Studies': ['History', 'Geography', 'Civics', 'Culture'],
+                        'Art': ['Creative Expression', 'Art Techniques', 'Art History', 'Visual Analysis'],
+                        'Physical Education': ['Motor Skills', 'Fitness', 'Teamwork', 'Sportsmanship'],
+                        'Music': ['Performance', 'Music Theory', 'Listening Skills', 'Composition'],
+                        'Computer Science': ['Coding', 'Digital Literacy', 'Problem Solving', 'Technology Use']
+                    };
+                    
+                    // Try to match skills to sections
+                    const subjectSections = defaultSections[subject] || ['General Skills'];
+                    subjectSections.forEach((sectionName, idx) => {
+                        sections[sectionName] = skills.slice(idx * 2, (idx + 1) * 2);
+                    });
+                }
+
+                let tableRows = '';
+                Object.keys(sections).forEach(sectionName => {
+                    tableRows += `<tr class="report-section-row"><td colspan="5">${sectionName}</td></tr>`;
+                    const sectionSkills = sections[sectionName];
+                    if (sectionSkills && sectionSkills.length > 0) {
+                        sectionSkills.forEach(skill => {
+                            const value = qualitative[skill] || '';
+                            const ele = value === 'ELE' || value === 'Exceeding' ? '✓' : '';
+                            const mle = value === 'MLE' || value === 'Meeting' ? '✓' : '';
+                            const p = value === 'P' || value === 'Progressing' ? '✓' : '';
+                            const ni = value === 'NI' || value === 'Needs Improvement' ? '✓' : '';
+                            
+                            tableRows += `<tr>
+                                <td>${skill}</td>
+                                <td class="report-col-small">${ele}</td>
+                                <td class="report-col-small">${mle}</td>
+                                <td class="report-col-small">${p}</td>
+                                <td class="report-col-small">${ni}</td>
+                            </tr>`;
+                        });
+                    } else {
+                        // If no skills in section, add placeholder
+                        tableRows += `<tr>
+                            <td>Assessment pending</td>
+                            <td class="report-col-small"></td>
+                            <td class="report-col-small"></td>
+                            <td class="report-col-small"></td>
+                            <td class="report-col-small"></td>
+                        </tr>`;
+                    }
+                });
+
+                // Quantitative section
+                const quant1 = quantitative['1st Assessment'] || quantitative['First Assessment'] || '';
+                const quant2 = quantitative['2nd Assessment'] || quantitative['Second Assessment'] || '';
+                const quantMid = quantitative['Mid of Year'] || quantitative['Mid-Year'] || '';
+                const quantTotal = quantitative['Total'] || '';
+                const quantPercent = quantitative['Percentage'] || '';
+
+                const pageHtml = `
+<style>
+@page { size: A4; margin: 0; }
+.report-page { width: 210mm; height: 297mm; margin: 0; padding: 0; position: relative; box-sizing: border-box; background-image: url("BG TEST/background.jpg"); background-size: cover; background-position: center; background-repeat: no-repeat; padding: 22mm 18mm; font-family: "Times New Roman", serif; page-break-after: always; }
+.report-logo { position: absolute; top: 20mm; right: 18mm; }
+.report-logo img { height: 60px; }
+.report-main-title { text-align: center; font-size: 17px; font-weight: bold; color: #002f6c; margin-top: 55px; margin-bottom: 6px; }
+.report-description { font-size: 12.5px; line-height: 1.35; margin-bottom: 10px; }
+.report-table { width: 100%; border-collapse: collapse; font-size: 12.5px; background: white; }
+.report-table th, .report-table td { border: 1px solid #002f6c; padding: 5px 6px; vertical-align: middle; }
+.report-table th { background: #002f6c; color: white; font-size: 13px; text-align: center; }
+.report-col-small { width: 38px; text-align: center; }
+.report-section-row td { background: #e8f1fb; font-weight: bold; color: #002f6c; font-size: 13px; }
+.report-quant-header { background: #002f6c; color: white; padding: 6px; font-weight: bold; font-size: 13px; margin-top: 12px; }
+.report-quant-table td { text-align: center; font-size: 12.5px; }
+.report-remarks-box { height: 85px; }
+.report-page-number { position: absolute; bottom: 10mm; right: 18mm; font-size: 11.5px; }
+</style>
+<div class="report-page">
+    <div class="report-logo">
+        <img src="BG TEST/logo 1.png" alt="Academus Logo">
+    </div>
+    <div class="report-main-title">${subject.toUpperCase()}</div>
+    <div class="report-description">${description}</div>
+    <table class="report-table">
+        <tr>
+            <th>AREAS OF DEVELOPMENT</th>
+            <th class="report-col-small">ELE</th>
+            <th class="report-col-small">MLE</th>
+            <th class="report-col-small">P</th>
+            <th class="report-col-small">NI</th>
+        </tr>
+        ${tableRows}
+    </table>
+    <div class="report-quant-header">Quantitative</div>
+    <table class="report-table report-quant-table">
+        <tr>
+            <td>${quant1 ? quant1 + '<br>/25' : '1st Assessment<br>/25'}</td>
+            <td>${quant2 ? quant2 + '<br>/25' : '2nd Assessment<br>/25'}</td>
+            <td>${quantMid ? quantMid + '<br>/100' : 'Mid of Year<br>/100'}</td>
+            <td>${quantTotal ? quantTotal + '<br>/150' : 'Total<br>/150'}</td>
+            <td>${quantPercent ? quantPercent + '<br>%' : 'Percentage<br>%'}</td>
+        </tr>
+    </table>
+    <table class="report-table" style="margin-top:8px;">
+        <tr><th>TEACHER REMARKS & NOTES</th></tr>
+        <tr><td class="report-remarks-box">${remarks.replace(/\n/g, '<br>')}</td></tr>
+    </table>
+</div>`;
+                return pageHtml;
+            }
+
+            // Build cover page
+            const coverHtml = `
+<style>
+@page { size: A4; margin: 0; }
+.cover-page { width: 210mm; height: 297mm; margin: 0; padding: 0; position: relative; box-sizing: border-box; background-image: url("BG TEST/background.jpg"); background-size: cover; background-position: center; background-repeat: no-repeat; padding: 22mm 18mm; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: "Times New Roman", serif; page-break-after: always; }
+.cover-logo { position: absolute; top: 20mm; right: 18mm; }
+.cover-logo img { height: 60px; }
+.cover-student-name { font-size: 32px; font-weight: bold; color: #002f6c; margin-bottom: 20px; text-align: center; }
+.cover-student-info { font-size: 18px; color: #002f6c; text-align: center; margin-bottom: 10px; }
+.cover-student-details { font-size: 16px; color: #666; text-align: center; margin-top: 30px; }
+.cover-report-title { font-size: 24px; font-weight: bold; color: #002f6c; margin-top: 40px; text-align: center; }
+</style>
+<div class="cover-page">
+    <div class="cover-logo">
+        <img src="BG TEST/logo 1.png" alt="Academus Logo">
+    </div>
+    <div class="cover-student-name">${student.name}</div>
+    <div class="cover-student-info">Student ID: ${student.studentId || student.id}</div>
+    <div class="cover-student-info">Class ${student.class}${student.section ? ' - Section ' + student.section : ''}</div>
+    <div class="cover-student-details">
+        ${student.parentsName ? 'Parent: ' + student.parentsName + '<br>' : ''}
+        ${student.phone ? 'Phone: ' + student.phone + '<br>' : ''}
+        ${student.address ? 'Address: ' + student.address : ''}
+    </div>
+    <div class="cover-report-title">ACADEMIC REPORT CARD</div>
+    <div class="cover-student-details" style="margin-top: 20px;">Academic Year ${new Date().getFullYear()}-${new Date().getFullYear() + 1}</div>
+</div>`;
+
+            // Build subject pages
+            const subjectPages = [];
+            const subjects = Object.keys(assessmentsBySubject);
+            
+            if (subjects.length === 0) {
+                // If no assessments, create a default page
+                subjectPages.push(buildSubjectPage('General', []));
+            } else {
+                subjects.forEach(subject => {
+                    subjectPages.push(buildSubjectPage(subject, assessmentsBySubject[subject]));
+                });
+            }
+
+            return { coverHtml, subjectPages };
+        }
+
+        // Print a single student's report to PDF using html2pdf (cover + subject pages)
+        function printStudentReport(studentId) {
+            const students = schoolData.getAllStudents() || [];
+            const student = students.find(s => s.id === studentId);
+            if (!student) { alert('Student not found'); return; }
+
+            const built = buildStudentReportHTML(student);
+
+            // Create a temporary container with all pages
+            const container = document.createElement('div');
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.width = '210mm';
+            document.body.appendChild(container);
+
+            // Add cover page
+            const coverDiv = document.createElement('div');
+            coverDiv.innerHTML = built.coverHtml;
+            container.appendChild(coverDiv);
+
+            // Add subject pages
+            built.subjectPages.forEach((pageHtml, index) => {
+                const pageDiv = document.createElement('div');
+                pageDiv.innerHTML = pageHtml;
+                container.appendChild(pageDiv);
+            });
+
+            // Generate PDF
+            setTimeout(() => {
+                const opt = {
+                    margin:       0,
+                    filename:     `${student.studentId || student.id}_report.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, backgroundColor: null, allowTaint: true, logging: false },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+                };
+
+                html2pdf().set(opt).from(container).save().then(() => {
+                    container.remove();
+                }).catch(err => {
+                    console.error('PDF generation error:', err);
+                    alert('Error generating PDF. See console for details.');
+                    container.remove();
+                });
+            }, 500);
+        }
+
+        // Print all student reports into one PDF (multi-page)
+        function printAllStudentReports() {
+            const students = schoolData.getAllStudents() || [];
+            if (!students || students.length === 0) { alert('No students to print'); return; }
+
+            // Create a temporary container with all pages
+            const container = document.createElement('div');
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.width = '210mm';
+            document.body.appendChild(container);
+
+            students.forEach((student, studentIndex) => {
+                const built = buildStudentReportHTML(student);
+                
+                // Cover page
+                const coverDiv = document.createElement('div');
+                coverDiv.innerHTML = built.coverHtml;
+                container.appendChild(coverDiv);
+
+                // Subject pages
+                built.subjectPages.forEach((pageHtml, pageIndex) => {
+                    const pageDiv = document.createElement('div');
+                    pageDiv.innerHTML = pageHtml;
+                    container.appendChild(pageDiv);
+                });
+            });
+
+            // Generate PDF
+            setTimeout(() => {
+                const opt = {
+                    margin:       0,
+                    filename:     `all_students_reports.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, backgroundColor: null, allowTaint: true, logging: false },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+                };
+
+                html2pdf().set(opt).from(container).save().then(() => {
+                    container.remove();
+                }).catch(err => {
+                    console.error('PDF generation error:', err);
+                    alert('Error generating PDF. See console for details.');
+                    container.remove();
+                });
+            }, 1000);
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'school-portal.html';
+        }
+
+        // Teacher Management Functions
+        function loadTeachersManagementList() {
+            const tbody = document.getElementById('teachersManagementTableBody');
+            if (!tbody) return;
+
+            if (typeof schoolData === 'undefined') {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--danger);">Error: Data storage not loaded.</td></tr>';
+                return;
+            }
+
+            try {
+                const teachers = schoolData.getAllTeachers() || [];
+                
+                if (teachers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">No teachers found. Add your first teacher!</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                teachers.forEach(teacher => {
+                    const classes = teacher.classes || [];
+                    const classesHtml = classes.length > 0
+                        ? classes.map(c => `<span style="background: var(--primary); color: white; padding: 4px 10px; border-radius: 8px; font-size: 11px; margin-right: 6px; display: inline-block;">${c.class}${c.section}</span>`).join('')
+                        : '<span style="color: var(--gray); font-style: italic;">None</span>';
+
+                    const subjectsDisplay = teacher.subjects && teacher.subjects.length > 0 ? teacher.subjects.join(', ') : 'N/A';
+
+                    html += `
+                        <tr>
+                            <td style="font-weight: 600; color: var(--dark);">${teacher.name}</td>
+                            <td style="font-size: 14px; color: var(--gray);">${teacher.email}</td>
+                            <td style="font-size: 14px; color: var(--dark);">${subjectsDisplay}</td>
+                            <td style="font-size: 14px; color: var(--primary); font-weight: 600;">${teacher.portalId || 'N/A'}</td>
+                            <td>${classesHtml}</td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-primary" onclick="showAssignClassesModalMgmt('${teacher.id}')" style="padding: 8px 16px; font-size: 13px;">📚 Assign</button>
+                                    <button class="btn btn-danger" onclick="deleteTeacherMgmt('${teacher.id}')" style="padding: 8px 16px; font-size: 13px;">🗑️ Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                tbody.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading teachers:', error);
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--danger);">Error loading teachers.</td></tr>';
+            }
+        }
+
+        function showAddTeacherModal() {
+            const modal = document.getElementById('addTeacherModalMgmt');
+            if (!modal) return;
+            modal.style.display = 'flex';
+            
+            // Clear fields
+            document.getElementById('newTeacherNameMgmt').value = '';
+            document.getElementById('newTeacherEmailMgmt').value = '';
+            document.getElementById('newTeacherSubjectMgmt').value = '';
+            document.getElementById('newTeacherPortalIdMgmt').value = '';
+            document.getElementById('newTeacherPasswordMgmt').value = '';
+        }
+
+        function closeAddTeacherModal() {
+            const modal = document.getElementById('addTeacherModalMgmt');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function addTeacherMgmt() {
+            if (typeof schoolData === 'undefined') {
+                alert('Error: Data storage not loaded.');
+                return;
+            }
+
+            const name = document.getElementById('newTeacherNameMgmt').value.trim();
+            const email = document.getElementById('newTeacherEmailMgmt').value.trim();
+            const portalId = document.getElementById('newTeacherPortalIdMgmt').value.trim();
+            const password = document.getElementById('newTeacherPasswordMgmt').value.trim();
+
+            // Get selected subjects
+            const selectedSubjectsDiv = document.getElementById('selectedSubjects');
+            const subjectSpans = selectedSubjectsDiv.querySelectorAll('.subject-tag');
+            const subjects = Array.from(subjectSpans).map(span => span.textContent.replace('×', '').trim());
+
+            if (!name || !email || subjects.length === 0) {
+                alert('Please fill in all required fields (Name, Email, Subjects)');
+                return;
+            }
+
+            try {
+                const teacherData = {
+                    name: name,
+                    email: email,
+                    subjects: subjects,
+                    classes: [],
+                    portalId: portalId || undefined,
+                    password: password || undefined
+                };
+
+                const newTeacher = schoolData.addTeacher(teacherData);
+
+                if (!newTeacher) {
+                    alert('Error: Could not add teacher. Email or Portal ID may already exist.');
+                    return;
+                }
+
+                alert('✅ Teacher added successfully!');
+                closeAddTeacherModal();
+                loadTeachersManagementList();
+                loadTeachers(); // Refresh teacher select in assign section
+            } catch (error) {
+                console.error('Error adding teacher:', error);
+                alert('Error adding teacher: ' + error.message);
+            }
+        }
+
+        function addSubjectToTeacher() {
+            const subjectSelector = document.getElementById('subjectSelector');
+            const selectedSubject = subjectSelector.value;
+            if (!selectedSubject) {
+                alert('Please select a subject to add.');
+                return;
+            }
+
+            const selectedSubjectsDiv = document.getElementById('selectedSubjects');
+            const existingSubjects = Array.from(selectedSubjectsDiv.querySelectorAll('.subject-tag')).map(span => span.textContent.replace('×', '').trim());
+
+            if (existingSubjects.includes(selectedSubject)) {
+                alert('This subject is already added.');
+                return;
+            }
+
+            const subjectTag = document.createElement('span');
+            subjectTag.className = 'subject-tag';
+            subjectTag.style.cssText = 'background: var(--primary); color: white; padding: 6px 12px; border-radius: 20px; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; margin-right: 8px; margin-bottom: 8px;';
+            subjectTag.innerHTML = `${selectedSubject}<button onclick="removeSubjectFromTeacher(this)" style="background: rgba(255,255,255,0.3); border: none; color: white; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 16px; line-height: 1; display: flex; align-items: center; justify-content: center;">×</button>`;
+            selectedSubjectsDiv.appendChild(subjectTag);
+
+            subjectSelector.value = '';
+        }
+
+        function removeSubjectFromTeacher(button) {
+            button.parentElement.remove();
+        }
+
+        function showAssignClassesModalMgmt(teacherId) {
+            const modal = document.getElementById('assignClassesModalMgmt');
+            if (!modal) return;
+
+            const data = schoolData.getData();
+            const teacher = data.teachers.find(t => t.id === teacherId);
+            
+            if (!teacher) {
+                alert('Teacher not found!');
+                return;
+            }
+
+            document.getElementById('assignTeacherIdMgmt').value = teacherId;
+            document.getElementById('assignTeacherNameMgmt').value = teacher.name;
+
+            // Display current classes
+            const currentClassesList = document.getElementById('currentClassesListMgmt');
+            const classes = teacher.classes || [];
+            
+            if (classes.length === 0) {
+                currentClassesList.innerHTML = '<div style="color: var(--gray); font-style: italic;">No classes assigned</div>';
+            } else {
+                let html = '<div style="display: flex; flex-wrap: wrap; gap: 8px;">';
+                classes.forEach((cls) => {
+                    html += `
+                        <div style="background: var(--primary); color: white; padding: 8px 12px; border-radius: 8px; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                            <span>${cls.class}${cls.section}</span>
+                            <button onclick="removeClassFromTeacherMgmt('${teacherId}', '${cls.class}', '${cls.section}')" style="background: rgba(255,255,255,0.3); border: none; color: white; border-radius: 4px; width: 20px; height: 20px; cursor: pointer; font-size: 12px; line-height: 1;">×</button>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                currentClassesList.innerHTML = html;
+            }
+
+            document.getElementById('assignClassMgmt').value = '';
+            document.getElementById('assignSectionMgmt').value = '';
+            modal.style.display = 'flex';
+        }
+
+        function closeAssignClassesModal() {
+            const modal = document.getElementById('assignClassesModalMgmt');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function addClassToTeacherMgmt() {
+            const teacherId = document.getElementById('assignTeacherIdMgmt').value;
+            const classNum = document.getElementById('assignClassMgmt').value;
+            const section = document.getElementById('assignSectionMgmt').value;
+
+            if (!teacherId || !classNum || !section) {
+                alert('Please select both class and section');
+                return;
+            }
+
+            try {
+                schoolData.assignTeacherToClass(teacherId, { class: classNum, section: section });
+                showAssignClassesModalMgmt(teacherId);
+                loadTeachersManagementList();
+                loadTeachers();
+            } catch (error) {
+                console.error('Error assigning class:', error);
+                alert('Error assigning class: ' + error.message);
+            }
+        }
+
+        function removeClassFromTeacherMgmt(teacherId, classNum, section) {
+            if (!confirm(`Remove teacher from Class ${classNum}${section}?`)) return;
+            try {
+                schoolData.removeTeacherFromClass(teacherId, { class: classNum, section: section });
+                showAssignClassesModalMgmt(teacherId);
+                loadTeachersManagementList();
+                loadTeachers();
+            } catch (error) {
+                console.error('Error removing class:', error);
+                alert('Error removing class: ' + error.message);
+            }
+        }
+
+        function deleteTeacherMgmt(teacherId) {
+            if (!confirm('Are you sure you want to delete this teacher? This action cannot be undone.')) return;
+            try {
+                const data = schoolData.getData();
+                data.teachers = data.teachers.filter(t => t.id !== teacherId);
+                schoolData.saveData(data);
+                alert('✅ Teacher deleted successfully!');
+                loadTeachersManagementList();
+                loadTeachers();
+            } catch (error) {
+                console.error('Error deleting teacher:', error);
+                alert('Error deleting teacher: ' + error.message);
+            }
+        }
+
+        setInterval(loadProgress, 5000);
+        init();
+    </script>
+
+    <!-- Add Teacher Modal -->
+    <div id="addTeacherModalMgmt" onclick="if(event.target.id === 'addTeacherModalMgmt') closeAddTeacherModal();" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 20px;">
+        <div class="content-card" onclick="event.stopPropagation();" style="max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 2px solid var(--gray-light);">
+                <h2 style="font-size: 24px; font-weight: 700; color: var(--dark);">Add New Teacher</h2>
+                <button onclick="closeAddTeacherModal()" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--bg); cursor: pointer; font-size: 24px; color: var(--gray);">×</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Full Name *</label>
+                <input type="text" id="newTeacherNameMgmt" class="form-input" placeholder="Enter teacher name" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address *</label>
+                <input type="email" id="newTeacherEmailMgmt" class="form-input" placeholder="Enter email address" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Subjects *</label>
+                <div id="subjectsContainer" style="border: 2px solid var(--gray-light); border-radius: 12px; padding: 16px; background: white;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;" id="selectedSubjects">
+                        <!-- Selected subjects will appear here -->
+                    </div>
+                    <select id="subjectSelector" class="form-select" style="margin-bottom: 12px;">
+                        <option value="">Add Subject</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="English">English</option>
+                        <option value="Science">Science</option>
+                        <option value="Social Studies">Social Studies</option>
+                        <option value="Art">Art</option>
+                        <option value="Physical Education">Physical Education</option>
+                        <option value="Music">Music</option>
+                        <option value="Computer Science">Computer Science</option>
+                    </select>
+                    <button type="button" class="btn btn-primary" onclick="addSubjectToTeacher()" style="width: 100%;">Add Subject</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Portal ID</label>
+                <input type="text" id="newTeacherPortalIdMgmt" class="form-input" placeholder="Auto-generated if left empty">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="newTeacherPasswordMgmt" class="form-input" placeholder="Default: teacher123">
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button class="btn btn-primary" onclick="addTeacherMgmt()" style="flex: 1; padding: 14px;">Add Teacher</button>
+                <button class="btn btn-secondary" onclick="closeAddTeacherModal()" style="flex: 1; padding: 14px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Classes Modal -->
+    <div id="assignClassesModalMgmt" onclick="if(event.target.id === 'assignClassesModalMgmt') closeAssignClassesModal();" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 20px;">
+        <div class="content-card" onclick="event.stopPropagation();" style="max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 2px solid var(--gray-light);">
+                <h2 style="font-size: 24px; font-weight: 700; color: var(--dark);">Assign Classes to Teacher</h2>
+                <button onclick="closeAssignClassesModal()" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--bg); cursor: pointer; font-size: 24px; color: var(--gray);">×</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Teacher</label>
+                <input type="text" id="assignTeacherNameMgmt" class="form-input" readonly>
+                <input type="hidden" id="assignTeacherIdMgmt">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Current Classes</label>
+                <div id="currentClassesListMgmt" style="margin-top: 10px; padding: 15px; background: var(--bg); border-radius: 12px; min-height: 50px;">
+                    <div style="color: var(--gray); font-style: italic;">No classes assigned</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Add New Class</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px;">
+                    <select id="assignClassMgmt" class="form-select">
+                        <option value="">Select Class</option>
+                        <option value="1">Class 1</option>
+                        <option value="2">Class 2</option>
+                        <option value="3">Class 3</option>
+                        <option value="4">Class 4</option>
+                        <option value="5">Class 5</option>
+                        <option value="6">Class 6</option>
+                        <option value="7">Class 7</option>
+                        <option value="8">Class 8</option>
+                        <option value="9">Class 9</option>
+                        <option value="10">Class 10</option>
+                    </select>
+                    <select id="assignSectionMgmt" class="form-select">
+                        <option value="">Select Section</option>
+                        <option value="A">Section A</option>
+                        <option value="B">Section B</option>
+                        <option value="C">Section C</option>
+                        <option value="D">Section D</option>
+                        <option value="E">Section E</option>
+                    </select>
+                    <button type="button" class="btn btn-primary" onclick="addClassToTeacherMgmt()" style="white-space: nowrap;">Add Class</button>
+                </div>
+            </div>
+            <div style="margin-top: 24px;">
+                <button class="btn btn-secondary" onclick="closeAssignClassesModal()" style="width: 100%; padding: 14px;">Close</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

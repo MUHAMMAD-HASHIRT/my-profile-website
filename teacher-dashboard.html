@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Academus International School</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="data-storage.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #f59e0b;
+            --primary-dark: #d97706;
+            --primary-light: #fbbf24;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --dark-light: #334155;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(10px) saturate(120%);
+            border-bottom: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 2px 6px rgba(16,24,40,0.04);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Ensure the raw logo file is capped everywhere to avoid oversized banners */
+        img[src="logo2.png"] {
+            max-width: 280px;
+            max-height: 56px;
+            width: auto;
+            height: auto;
+            display: block;
+        }
+
+        .nav-brand-logo {
+            width: 35px;
+            height: 35px;
+            object-fit: contain;
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+
+        .nav-brand-icon {
+            width: 220px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            overflow: hidden;
+            gap: 12px;
+        }
+
+        .nav-brand-icon img {
+            max-width: 100%;
+            max-height: 48px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: var(--bg);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-profile:hover {
+            background: var(--gray-light);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-info-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Main Container */
+        .main-container {
+            margin-top: 64px;
+            padding: 30px;
+            max-width: 1600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Dashboard Header */
+        .welcome-section {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 30px;
+        }
+
+        .welcome-title {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .welcome-subtitle {
+            font-size: 18px;
+            color: var(--gray);
+            font-weight: 400;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+        }
+
+        .stat-card.classes .stat-icon {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .stat-card.students .stat-icon {
+            background: linear-gradient(135deg, #ec4899, #db2777);
+        }
+
+        .stat-card.assessments .stat-icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .stat-card.reviews .stat-icon {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Content Sections */
+        .content-sections {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--gray-light);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        /* Class List */
+        .class-list {
+            list-style: none;
+        }
+
+        .class-item {
+            padding: 24px;
+            border: 2px solid var(--gray-light);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            background: var(--bg);
+        }
+
+        .class-item:hover {
+            border-color: var(--primary);
+            transform: translateX(8px);
+            box-shadow: var(--shadow);
+        }
+
+        .class-info-wrapper {
+            flex: 1;
+        }
+
+        .class-name {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .class-info {
+            font-size: 14px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .class-badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--primary);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            gap: 16px;
+        }
+
+        .action-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            box-shadow: var(--shadow);
+            text-decoration: none;
+            text-align: left;
+        }
+
+        .action-link:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .action-link.secondary {
+            background: linear-gradient(135deg, var(--secondary), #db2777);
+        }
+
+        .action-link.success {
+            background: linear-gradient(135deg, var(--success), #059669);
+        }
+
+        .action-link.warning {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .content-sections {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .top-nav {
+                padding: 0 16px;
+            }
+
+            .main-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <div class="nav-brand-icon"><img src="logo2.png" alt="Academus International School emblem featuring a gold and navy open book with a golden eagle and globe symbol, representing global education and learning"></div>
+        </div>
+        <div class="nav-actions">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">T</div>
+                <div class="user-info-text">
+                    <div class="user-name" id="userName">Teacher User</div>
+                    <div class="user-role">Teacher</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome Back! 👋</h1>
+            <p class="welcome-subtitle">Here's your teaching overview for today</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card classes">
+                <div class="stat-card-header">
+                    <div class="stat-icon">🏫</div>
+                    <div class="stat-trend">
+                        <span>✓</span>
+                        <span>Active</span>
+                    </div>
+                </div>
+                <div class="stat-value" id="classesCount">-</div>
+                <div class="stat-label">My Classes</div>
+            </div>
+
+            <div class="stat-card students">
+                <div class="stat-card-header">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-trend">
+                        <span>↑</span>
+                        <span>Active</span>
+                    </div>
+                </div>
+                <div class="stat-value" id="studentsCount">-</div>
+                <div class="stat-label">Total Students</div>
+            </div>
+
+            <div class="stat-card assessments">
+                <div class="stat-card-header">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-trend">
+                        <span>!</span>
+                        <span>Due</span>
+                    </div>
+                </div>
+                <div class="stat-value" id="assessmentsCount">-</div>
+                <div class="stat-label">Assessments Due</div>
+            </div>
+
+            <div class="stat-card reviews">
+                <div class="stat-card-header">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-trend">
+                        <span>!</span>
+                        <span>Pending</span>
+                    </div>
+                </div>
+                <div class="stat-value" id="reviewsCount">-</div>
+                <div class="stat-label">Pending Reviews</div>
+            </div>
+        </div>
+
+        <!-- Content Sections -->
+        <div class="content-sections">
+            <!-- My Classes -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon">🏫</div>
+                        My Classes
+                    </div>
+                </div>
+                <ul class="class-list" id="classesList">
+                    <li class="class-item">
+                        <div class="class-info-wrapper">
+                            <div class="class-name">Loading classes...</div>
+                            <div class="class-info">Please wait</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-title">
+                        <div class="section-icon">⚡</div>
+                        Quick Actions
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <a href="teacher-assessment.html" class="action-link">
+                        <div class="action-icon">📝</div>
+                        <span>Student Assessments</span>
+                    </a>
+                    <a href="#" class="action-link secondary">
+                        <div class="action-icon">📊</div>
+                        <span>View Reports</span>
+                    </a>
+                    <a href="#" class="action-link success">
+                        <div class="action-icon">👥</div>
+                        <span>Student List</span>
+                    </a>
+                    <a href="#" class="action-link warning">
+                        <div class="action-icon">📅</div>
+                        <span>View Schedule</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // STRICT login check
+        const isLoggedIn = sessionStorage.getItem('teacherLoggedIn');
+        const userRole = sessionStorage.getItem('userRole');
+        
+        if (!isLoggedIn || userRole !== 'teacher') {
+            sessionStorage.clear();
+            window.location.href = 'teacher-login.html';
+        }
+
+        // Set user name and avatar
+        const userPortalId = sessionStorage.getItem('userPortalId');
+        if (userPortalId) {
+            const userNameEl = document.getElementById('userName');
+            const userRoleEl = document.getElementById('userRole');
+            const userAvatarEl = document.getElementById('userAvatar');
+
+            // Get teacher data to display name and email
+            if (typeof schoolData !== 'undefined') {
+                const teacher = schoolData.getTeacherByPortalId(userPortalId);
+                if (teacher) {
+                    if (userNameEl) {
+                        userNameEl.textContent = teacher.name;
+                    }
+                    if (userRoleEl) {
+                        userRoleEl.textContent = teacher.email;
+                    }
+                    if (userAvatarEl) {
+                        userAvatarEl.textContent = teacher.name.charAt(0).toUpperCase();
+                    }
+                }
+            }
+        }
+
+        // Load teacher data and classes
+        function loadTeacherData() {
+            if (typeof schoolData === 'undefined') {
+                console.error('data-storage.js not loaded!');
+                return;
+            }
+
+            const portalId = sessionStorage.getItem('userPortalId');
+            const teacher = schoolData.getTeacherByPortalId(portalId);
+            
+            if (!teacher) {
+                console.error('Teacher not found');
+                return;
+            }
+
+            // Update stats
+            const classes = teacher.classes || [];
+            const students = schoolData.getStudentsForTeacher(teacher.id);
+            
+            document.getElementById('classesCount').textContent = classes.length;
+            document.getElementById('studentsCount').textContent = students.length;
+            
+            // Calculate assessments due (students without assessments)
+            let assessmentsDue = 0;
+            students.forEach(student => {
+                const assessment = schoolData.getAssessment(teacher.id, student.id);
+                if (!assessment || !assessment.submitted) {
+                    assessmentsDue++;
+                }
+            });
+            document.getElementById('assessmentsCount').textContent = assessmentsDue;
+            document.getElementById('reviewsCount').textContent = assessmentsDue;
+
+            // Load classes list
+            const classesList = document.getElementById('classesList');
+            if (classes.length === 0) {
+                classesList.innerHTML = '<li class="class-item"><div class="class-info-wrapper"><div class="class-name">No classes assigned</div><div class="class-info">Please contact admin to assign classes</div></div></li>';
+            } else {
+                let html = '';
+                classes.forEach(cls => {
+                    const classStudents = students.filter(s => s.class === cls.class && s.section === cls.section);
+                    html += `<li class="class-item">
+                        <div class="class-info-wrapper">
+                            <div class="class-name">Class ${cls.class}${cls.section} - ${teacher.subject}</div>
+                            <div class="class-info">
+                                <span class="class-badge">${classStudents.length} students</span>
+                                <span>•</span>
+                                <span>Active</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="window.location.href='teacher-assessment.html'">View</button>
+                    </li>`;
+                });
+                classesList.innerHTML = html;
+            }
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'school-portal.html';
+        }
+
+        // Wait for data-storage.js to load
+        let attempts = 0;
+        const checkDataStorage = setInterval(function() {
+            attempts++;
+            
+            if (typeof schoolData !== 'undefined') {
+                clearInterval(checkDataStorage);
+                loadTeacherData();
+            } else if (attempts > 10) {
+                clearInterval(checkDataStorage);
+                console.error('data-storage.js not loaded after 10 attempts!');
+            }
+        }, 200);
+    </script>
+</body>
+</html>
