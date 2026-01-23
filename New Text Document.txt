@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Communication, Language and Literacy</title>
+
+<style>
+/* ================= A4 PAGE ================= */
+@page {
+    size: A4;
+    margin: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Times New Roman", serif;
+    background: white;
+}
+
+/* ================= PAGE CONTAINER ================= */
+.page {
+    width: 210mm;
+    height: 297mm;
+    margin: auto;
+    position: relative;
+    box-sizing: border-box;
+
+    /* BACKGROUND IMAGE */
+    background-image: url("background.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    padding: 22mm 18mm;
+}
+
+/* ================= LOGO ================= */
+.logo {
+    position: absolute;
+    top: 20mm;
+    right: 18mm;
+}
+
+.logo img {
+    height: 60px;
+}
+
+/* ================= TITLES ================= */
+.main-title {
+    text-align: center;
+    font-size: 17px;
+    font-weight: bold;
+    color: #002f6c;
+    margin-top: 55px;
+    margin-bottom: 6px;
+}
+
+.description {
+    font-size: 12.5px;
+    line-height: 1.35;
+    margin-bottom: 10px;
+}
+
+/* ================= TABLE ================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    background: white;
+}
+
+th, td {
+    border: 1px solid #002f6c;
+    padding: 5px 6px;
+    vertical-align: middle;
+}
+
+th {
+    background: #002f6c;
+    color: white;
+    font-size: 13px;
+    text-align: center;
+}
+
+.col-small {
+    width: 38px;
+    text-align: center;
+}
+
+/* ================= SECTION HEADERS ================= */
+.section-row td {
+    background: #e8f1fb;
+    font-weight: bold;
+    color: #002f6c;
+    font-size: 13px;
+}
+
+/* ================= QUANTITATIVE ================= */
+.quant-header {
+    background: #002f6c;
+    color: white;
+    padding: 6px;
+    font-weight: bold;
+    font-size: 13px;
+    margin-top: 12px;
+}
+
+.quant-table td {
+    text-align: center;
+    font-size: 12.5px;
+}
+
+/* ================= REMARKS ================= */
+.remarks-box {
+    height: 85px;
+}
+
+/* ================= PAGE NUMBER ================= */
+.page-number {
+    position: absolute;
+    bottom: 10mm;
+    right: 18mm;
+    font-size: 11.5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- LOGO -->
+    <div class="logo">
+        <img src="logo 1.png" alt="Academus Logo">
+    </div>
+
+    <!-- TITLE -->
+    <div class="main-title">
+        COMMUNICATION, LANGUAGE AND LITERACY (ENGLISH)
+    </div>
+
+    <div class="description">
+        A child’s way of effectively communicating with the world plays a major role in life.
+        A well-articulate and expressive child can take leaps of success on his/her own.
+        A strong communication background, makes the world an oyster for the child.
+    </div>
+
+    <!-- MAIN TABLE -->
+    <table>
+        <tr>
+            <th>AREAS OF DEVELOPMENT</th>
+            <th class="col-small">ELE</th>
+            <th class="col-small">MLE</th>
+            <th class="col-small">P</th>
+            <th class="col-small">NI</th>
+        </tr>
+
+        <tr class="section-row"><td colspan="5">Reading and Comprehension</td></tr>
+        <tr>
+            <td>Can identify the main idea and supporting details in a text</td>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+            <td>Can locate and use relevant information from a text to answer questions</td>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+
+        <tr class="section-row"><td colspan="5">Grammar and Punctuation</td></tr>
+        <tr>
+            <td>Can use knowledge of punctuation and grammar to read familiar texts with understanding</td>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+            <td>Can use simple present and past tense accurately in writing and speech</td>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+            <td>Can use prepositions of time and place correctly and form clear noun phrases to add detail in writing</td>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+
+        <tr class="section-row"><td colspan="5">Writing Skills</td></tr>
+        <tr>
+            <td>Can produce imaginative writing with clear ideas, descriptive details and a logical sequence of events</td>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+            <td>Can complete structured writing tasks by following the given format, instructions and purpose accurately</td>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+
+        <tr class="section-row"><td colspan="5">Speaking Skills</td></tr>
+        <tr>
+            <td>Can speak clearly and confidently in full sentences during class discussions</td>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+            <td>Can share ideas and opinions using appropriate vocabulary</td>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+
+        <tr class="section-row"><td colspan="5">Listening Skills</td></tr>
+        <tr>
+            <td>Can listen attentively to instructions, stories and discussions</td>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+        <tr>
+            <td>Can respond appropriately to questions based on what is heard</td>
+            <td></td><td></td><td></td><td></td>
+        </tr>
+    </table>
+
+    <!-- QUANTITATIVE -->
+    <div class="quant-header">Quantitative</div>
+    <table class="quant-table">
+        <tr>
+            <td>1st Assessment<br>/25</td>
+            <td>2nd Assessment<br>/25</td>
+            <td>Mid of Year<br>/100</td>
+            <td>Total<br>/150</td>
+            <td>Percentage<br>%</td>
+        </tr>
+    </table>
+
+    <!-- REMARKS -->
+    <table style="margin-top:8px;">
+        <tr><th>TEACHER REMARKS & NOTES</th></tr>
+        <tr><td class="remarks-box"></td></tr>
+    </table>
+
+    <div class="page-number">3</div>
+
+</div>
+
+</body>
+</html>

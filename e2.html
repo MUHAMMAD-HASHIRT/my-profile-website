@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Report Card</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+/* ================= GLOBAL STYLES ================= */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif; /* Matches the clean look of the reference */
+    background: #525659;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ================= CONTROL PANEL ================= */
+.control-panel {
+    width: 100%;
+    background: #333;
+    padding: 15px 0;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.btn {
+    border: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: bold;
+    color: white;
+    background-color: #002f6c;
+}
+.btn:hover { background-color: #004094; }
+
+/* ================= A4 PAGE CONTAINER ================= */
+.page {
+    width: 210mm;
+    height: 297mm;
+    position: relative; /* Essential for absolute positioning of layers */
+    background-color: white; 
+    margin: 30px auto;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    overflow: hidden; 
+}
+
+/* ================= LAYERING SYSTEM ================= */
+
+/* LAYER 1: Header/Footer Frame (Bottom) */
+.bg-layer-base {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; 
+    object-fit: cover;
+}
+
+/* LAYER 2: The Lion Watermark (Middle) */
+.bg-layer-watermark {
+    position: absolute;
+    top: 55%; /* Moved slightly down to center in the working area */
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centers the image */
+    width: 85%; /* Adjust width to fill page like reference */
+    height: auto;
+    z-index: 2; 
+    opacity: 0.12; /* Transparency: Low enough to read text, high enough to see lion */
+    pointer-events: none;
+}
+
+/* LAYER 3: The Content (Top) */
+.content-wrapper {
+    position: relative;
+    z-index: 3; 
+    /* Top padding pushes content down below the Academus logo */
+    padding: 45mm 15mm 20mm 15mm; 
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+/* ================= TYPOGRAPHY ================= */
+.main-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #00205b; /* Dark Navy */
+    text-transform: uppercase;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.sub-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: #00205b;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.description {
+    font-size: 11px;
+    line-height: 1.4;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: justify;
+}
+
+/* ================= TABLE STYLES ================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    /* CRITICAL: Transparent background so the Lion shows through */
+    background: transparent; 
+}
+
+th, td {
+    border: 1px solid #99aab5; /* Light blue-grey borders */
+    padding: 4px 6px;
+    vertical-align: middle;
+    font-size: 11px;
+}
+
+/* Headers */
+th {
+    background: #00205b; 
+    color: white;
+    text-align: left;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 11px;
+    -webkit-print-color-adjust: exact;
+}
+
+/* Specific Column Headers */
+.col-header-small {
+    width: 35px;
+    text-align: center;
+}
+
+/* Section Headers (Reading, Writing, etc.) */
+.section-header {
+    background: rgba(240, 244, 248, 0.7); /* Semi-transparent light blue */
+    color: #00205b;
+    font-weight: bold;
+    font-size: 13px;
+    padding: 6px;
+    -webkit-print-color-adjust: exact;
+}
+
+/* Data Cells */
+.check-box {
+    text-align: center;
+    /* Ensure cells are transparent */
+    background: transparent; 
+}
+
+/* ================= QUANTITATIVE TABLE ================= */
+.quant-header {
+    background: #00205b;
+    color: white;
+    padding: 6px;
+    font-weight: bold;
+    font-size: 12px;
+    margin-top: 15px;
+    -webkit-print-color-adjust: exact;
+}
+
+.quant-table {
+    margin-top: 0;
+}
+/* This table needs a white background to stand out from footer? 
+   Or transparent? Reference shows it white usually, but let's keep consistent */
+.quant-table td {
+    background: rgba(255,255,255, 0.8); 
+    text-align: center;
+    font-weight: bold;
+    color: #555;
+    padding: 8px;
+}
+.quant-label {
+    background: rgba(240, 244, 248, 0.8);
+    color: #00205b;
+}
+.quant-score {
+    font-size: 14px;
+    color: #333;
+}
+
+/* ================= REMARKS ================= */
+.remarks-container {
+    border: 1px solid #00205b;
+    margin-top: 10px;
+    height: 90px;
+    position: relative;
+    background: rgba(255, 255, 255, 0.5); /* Semi-transparent */
+}
+
+.remarks-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: #00205b;
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.page-number {
+    position: absolute;
+    bottom: 12mm;
+    right: 18mm;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* ================= PRINT SETTINGS ================= */
+@media print {
+    body { background: none; margin: 0; }
+    .control-panel { display: none; }
+    .page { margin: 0; box-shadow: none; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+
+<body>
+
+    <div class="control-panel" data-html2pdf-ignore="true">
+        <button class="btn" onclick="generatePDF()">Download PDF Report</button>
+        <button class="btn" style="background:#666;" onclick="window.print()">Native Print</button>
+    </div>
+
+    <div class="page" id="report-card">
+        
+        <img src="header footer.png" class="bg-layer-base" alt="Frame">
+
+        <img src="background.png" class="bg-layer-watermark" alt="Watermark">
+
+        <div class="content-wrapper">
+
+            <div class="main-title">Communication, Language and Literacy (English)</div>
+            <div class="sub-title">Removing Barriers</div>
+            
+            <div class="description">
+                A child’s way of effectively communicating with the world plays a major role in life. 
+                A well-articulate and expressive child can take leaps of success on his/her own. 
+                A strong communication background makes the world an oyster for the child.
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>AREAS OF DEVELOPMENT</th>
+                        <th class="col-header-small">ELE</th>
+                        <th class="col-header-small">MLE</th>
+                        <th class="col-header-small">P</th>
+                        <th class="col-header-small">NI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5" class="section-header">Reading and Comprehension</td></tr>
+                    <tr><td>Can identify the main idea and supporting details in a text</td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td></tr>
+                    <tr><td>Can locate and use relevant information from a text to answer questions</td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td></tr>
+
+                    <tr><td colspan="5" class="section-header">Grammar and Punctuation</td></tr>
+                    <tr><td>Can use knowledge of punctuation and grammar to read familiar texts with understanding</td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td></tr>
+                    <tr><td>Can use simple present and past tense accurately in writing and speech</td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td></tr>
+                    <tr><td>Can use prepositions of time and place correctly and form clear noun phrases to add detail in writing</td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td></tr>
+
+                    <tr><td colspan="5" class="section-header">Writing Skills</td></tr>
+                    <tr><td>Can produce imaginative writing with clear ideas, descriptive details and a logical sequence of events</td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td></tr>
+                    <tr><td>Can complete structured writing tasks by following the given format, instructions and purpose accurately</td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td></tr>
+
+                    <tr><td colspan="5" class="section-header">Speaking Skills</td></tr>
+                    <tr><td>Can speak clearly and confidently in full sentences during class discussions</td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td></tr>
+                    <tr><td>Can share ideas and opinions using appropriate vocabulary</td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td></tr>
+
+                    <tr><td colspan="5" class="section-header">Listening Skills</td></tr>
+                    <tr><td>Can listen attentively to instructions, stories and discussions</td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td></tr>
+                    <tr><td>Can respond appropriately to questions based on what is heard</td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td><td class="check-box"></td></tr>
+                </tbody>
+            </table>
+
+            <div class="quant-header">Quantitative</div>
+            <table class="quant-table">
+                <tr>
+                    <td class="quant-label">1st Assessment</td>
+                    <td class="quant-label">2nd Assessment</td>
+                    <td class="quant-label">Mid of Year</td>
+                    <td class="quant-label">Total</td>
+                    <td class="quant-label">Percentage</td>
+                </tr>
+                <tr>
+                    <td class="quant-score">/25</td>
+                    <td class="quant-score">/25</td>
+                    <td class="quant-score">/100</td>
+                    <td class="quant-score">/150</td>
+                    <td class="quant-score">%</td>
+                </tr>
+            </table>
+
+            <div class="remarks-container">
+                <div class="remarks-title">TEACHER REMARKS & NOTES</div>
+            </div>
+
+            <div class="page-number">3</div>
+
+        </div>
+    </div>
+
+<script>
+    function generatePDF() {
+        const element = document.getElementById('report-card');
+        const opt = {
+            margin:       0,
+            filename:     'Student_Report_Card.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2, 
+                useCORS: true,
+                scrollY: 0
+            },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+</script>
+
+</body>
+</html>
